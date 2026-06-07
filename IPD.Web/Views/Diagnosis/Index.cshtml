@@ -1,0 +1,109 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model List<PatientDiagnosisDto>
+@{
+    ViewData["Title"] = "Diagnosis";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var diagnosisCodes = ViewBag.DiagnosisCode as List<ICDDigonosisCodeDto> ?? new List<ICDDigonosisCodeDto>();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Logo-->
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container mt-3">
+    <div class="col-md-10 offset-1 text-center">
+        <h1 class="mt-3" style="font-size:36px; font-weight:700;">Diagnosis</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Navabr button-->
+    <nav class="navbar navbar-light offset-md-1 mt-3">
+        <form class="container-fluid justify-content-start">
+            <a href="/ChiefComplaints/Index" class="btn btn-outline-secondary btnNav me-2 my-1" role="button">Chief Complaint</a>
+            <a href="/PatientExaminations/Index" class="btn btn-outline-secondary btnNav me-2 my-1" role="button">Examinations</a>
+            <a href="/Diagnosis/Index" class="btn btn-primary btnNav me-2 my-1" role="button">Diagnosis</a>
+            <a href="/TreatmentPlan/Index" class="btn btn-outline-secondary btnNav me-2 my-1" role="button">Treatment Plan</a>
+            <a href="/MedicationPlan/Index" class="btn btn-outline-secondary btnNav me-2 my-1" role="button">Medication Plan</a>
+        </form>
+    </nav>
+
+    <!--Header-->
+    <div class="col-md-10 offset-md-1 mt-3">
+        @await Component.InvokeAsync("ClientClinicInfo")
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!--Chief complaint-->
+        <div class="col-md-3 offset-md-1 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+        <div class="col-md-7 mt-2">
+            @*<div class="responsive_div">*@
+            <a href="/Diagnosis/Create" class="btn btn-primary btn-big fs-6"><span>Add New</span></a>
+
+            @foreach (var patientDiagnosis in Model)
+            {
+                <div class="card mt-3 mb-2">
+                    <div class="card-body pb-0">
+                        <h6 style="color:#317eac;">Date Created : @patientDiagnosis.DateCreated.Value.ToString("dd-MM-yyyy, hh:mm ttt")</h6>
+                        <table class="table table-condensed table-responsive" style="font-size: 15px;">
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" class="fs-5 text-secondary shadow-sm" style="background-color: rgba(0,0,0,.03);">
+                                        <span>Diagnosis</span>
+                                        @if (DateTime.Now.IsWithin24Hours(patientDiagnosis.DateCreated ?? DateTime.Now))
+                                        {
+                                            <span class="float-end">
+                                                <a href="@Url.ActionLink("Edit", "Diagnosis", new { patientDiagnosisId = patientDiagnosis.PatientDiagnosisID })" class="btn btn-primary backBtn">Edit</a>
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    @{
+                                        var diagnosisIds = patientDiagnosis.DiagonosisDetails.Select(x => x.DiseaseID).ToList();
+                                        var diagnosisDetails = diagnosisCodes
+                                        .Where(x => diagnosisIds.Contains(x.DiseaseID))
+                                        .ToList();
+                                    }
+                                    <th width="30%">ICD Diagnosis</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @foreach (var diagnosisCode in diagnosisDetails)
+                                        {
+                                            <span>@diagnosisCode?.ICDCode @diagnosisCode?.Description, </span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%" style="border: none;">Findings</th>
+                                    <td width="3" style="border: none;">:</td>
+                                    <td width="67%" style="border: none;">
+                                        <span>@patientDiagnosis.DiagnosisNote</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @*</div>*@
+            <a href="/Clients/ManageClient?patientId=@ViewBag.ClientId" class="btn btn-sm-back"><span>Back</span></a>
+        </div>
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->

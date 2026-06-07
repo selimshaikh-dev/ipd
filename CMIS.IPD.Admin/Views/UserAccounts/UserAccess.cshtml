@@ -1,0 +1,136 @@
+﻿@model IPD.Domain.Entities.UserAccess
+
+@{
+    ViewBag.Title = "User Access";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+<!--Custom CSS-->
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<style type="text/css">
+    /*Removes bullet from Validation Summary.*/
+    .validation-summary-errors ul {
+        list-style: none;
+        margin-left: -40px
+    }
+</style>
+
+<div class="row custom-margin-parent-div gx-4 gy-4">
+   @Html.Partial("_LeftNavigation")
+
+   <div class="col-lg-8 col-md-8 col-sm-12">
+        <h2>User Access</h2>
+        <hr />
+        <div class="card panel-default">
+            <div class="card-header">User Access</div>
+
+            <div class="card-body">
+                <form asp-action="UserAccess" asp-controller="UserAccounts" method="post"> 
+                
+                    <input type="hidden" name="UserAccountID" value="@ViewBag.UserAccountID" />
+ 
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            @Html.ValidationSummary("", new { @class = "alert alert-danger alert-dismissible fade show" })
+                        }
+
+                    <h4>@ViewBag.UserAccount</h4>
+
+                    <table class="table table-bordered table-condensed" style="width:56%;">
+                        <tr>
+                            <th colspan="4">Modules</th>                        
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="1" checked="@ViewBag.Admissions" /></td>
+                            <td>Admissions</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="2" checked="@ViewBag.ChiefComplaints" /></td>
+                            <td>ChiefComplaints</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="3" checked="@ViewBag.Clients" /></td>
+                            <td>Clients</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="4" checked="@ViewBag.DeathCertificates" /></td>
+                            <td>DeathCertificates</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="5" checked="@ViewBag.DiabeticProfile" /></td>
+                            <td>DiabeticProfile</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="6" checked="@ViewBag.Diagnosis" /></td>
+                            <td>Diagnosis</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="7" checked="@ViewBag.Discharge" /></td>
+                            <td>Discharge</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="8" checked="@ViewBag.DoctorsNote" /></td>
+                            <td>DoctorsNote</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="9" checked="@ViewBag.InternationalReferral" /></td>
+                            <td>InternationalReferral</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="10" checked="@ViewBag.InterReferrals" /></td>
+                            <td>InterReferrals</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="11" checked="@ViewBag.MedicationPlan" /></td>
+                            <td>MedicationPlan</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="12" checked="@ViewBag.NursingCare" /></td>
+                            <td>NursingCare</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="13" checked="@ViewBag.Partograph" /></td>
+                            <td>Partograph</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="14" checked="@ViewBag.PatientExaminations" /></td>
+                            <td>PatientExaminations</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="15" checked="@ViewBag.PostSurgeries" /></td>
+                            <td>PostSurgeries</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="16" checked="@ViewBag.Referral" /></td>
+                            <td>Referral</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="17" checked="@ViewBag.Surgeries" /></td>
+                            <td>Surgeries</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="18" checked="@ViewBag.TreatmentPlan" /></td>
+                            <td>TreatmentPlan</td>
+                        </tr>
+
+                        <tr>
+                            <td align="center"><input type="checkbox" name="selectedModule" value="19" checked="@ViewBag.Users" /></td>
+                            <td>Users</td>
+
+                            <td align="center"><input type="checkbox" name="selectedModule" value="20" checked="@ViewBag.Vitals" /></td>
+                            <td>Vitals</td>
+                        </tr>
+                    </table>
+
+                    @*<button type="submit" value="Save" class="btn btn-save mx-2" />*@
+                      <button type="submit" id="btnSave" value="Save" class="btn btn-save m-2">Save</button>
+                    <a href="@Url.ActionLink("Index", "UserAccounts")" type="button" class="btn btn-back mx-2">Back</a>                
+                </form>
+            </div>
+        </div>
+   </div>
+</div>

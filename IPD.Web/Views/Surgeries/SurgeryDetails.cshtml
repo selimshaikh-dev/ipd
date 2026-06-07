@@ -1,0 +1,155 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model SurgeriesDto
+@using static IPD.Domain.Constants.Enumerators
+@{
+    ViewBag.Title = "Surgery Detail";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var surgeryTypes = ViewBag.SurgeryTypes as List<SurgeryTypeDto> ?? new List<SurgeryTypeDto>();
+    var surgicalProcedures = ViewBag.SurgicalProcedures as List<SurgicalProceduresDto> ?? new List<SurgicalProceduresDto>();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container mt-3">
+    <div class="col-md-10 offset-1 text-center">
+        <h1 class="text-center mt-3" style="font-size:36px; font-weight:700;">Surgery Details</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 offset-1 mt-3">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!-- Surgery -->
+        <div class="col-md-5 offset-1">
+            <div class="card mt-3 " style="">
+                <div class="card-header" style="font-size:30px;">Surgery</div>
+                <div class="card-body">
+                    <table class="table table-condensed table-responsive">
+                        <tbody>
+                            @*<tr>
+                                <td width="30%">Surgery date</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.SurgeryDate.ToLongDateString() @Model.SurgeryTime.ToShortTimeString()</td>
+                            </tr>*@
+                            <tr>
+                                <td width="30%">Anesthetist assessment</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.AnaesthetistAssessment</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Diagnosis</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.Diagnosis</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Has patients consent</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.HasPatientsConcent</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Procedure indication</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.ProcedureIndication</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Surgery team</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.SurgeryTeam</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Surgery type</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">
+                                    @{
+                                        var surgeryType = surgeryTypes.FirstOrDefault(x => x.SurgeryTypeID == Model.SurgeryTypeID);
+                                    }
+                                    @surgeryType?.TypeName
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Surgical procedure</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">
+                                    @{
+                                        var surgicalProcedure = surgicalProcedures.FirstOrDefault(x => x.SurgicalProcedureID == Model.SurgicalProcedureID);
+                                    }
+                                    @surgicalProcedure?.ProcedureName
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Other surgery type</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.OtherSurgeryType</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @{
+            if (Model.PostSurgeries != null && Model.PostSurgeries.Any())
+            {
+                var postSurgery = Model.PostSurgeries.FirstOrDefault();
+                if (postSurgery != null)
+                {
+                    <!-- Post Surgery -->
+                    <div class="col-md-5">
+                        <div class="card ms-2 mt-3" style="">
+                         <div class="card-header" style="font-size:30px;">Post surgery</div>
+                            <div class="card-body">
+                                <table class="table table-condensed table-responsive">
+                                    <tbody>
+                                        <tr>
+                                            <td width="30%">Surgery details</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@postSurgery.SurgeryDetails</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Findings</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@postSurgery.Findings</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Post Surgery plan</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@postSurgery.PostSurgeryPlan</td>
+                                        </tr>
+                                        <tr>
+                                            @{
+                                                var patientsConditions = Html.GetEnumSelectList(typeof(PatientsConditions));
+                                                var condition = patientsConditions.FirstOrDefault(x => x.Value == postSurgery.PatientsCondition.ToString());
+                                            }
+                                            <td width="30%">Patients condition</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@condition?.Text.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        <div class="col-md-10 offset-1">
+            <p class="mt-3">
+                <a class="btn btn-sm-back" href="@Url.ActionLink("Index", "Surgeries")" style="text-align: center; line-height:28px">Back</a>
+            </p>
+        </div>
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->

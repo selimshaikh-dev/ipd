@@ -1,0 +1,183 @@
+﻿@using IPD.Domain.Dto
+@model SurgeriesDto
+
+@{
+    ViewBag.Title = "Surgery";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+@{
+    var surgeryTypes = ViewBag.SurgeryTypes as List<SurgeryTypeDto> ?? new List<SurgeryTypeDto>();
+    var surgicalProcedures = ViewBag.SurgicalProcedures as List<SurgicalProceduresDto> ?? new List<SurgicalProceduresDto>();
+}
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<h1 class="text-center text-capitalize mt-3" style="font-size:36px;">Surgery</h1>
+<h5 class="text-center">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <form asp-action="Edit" asp-controller="Surgeries" method="post">
+        <div class="row mt-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <!--Chief Complaint-->
+            <div class="col-md-3 mt-2">
+                @*<div class="responsive_div">*@
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Surgery
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-3">
+                        <fieldset>
+                            <input type="hidden" asp-for="SurgeryID" value="@Model.SurgeryID" />
+                            <input type="hidden" asp-for="AdmissionID" value="@Model.AdmissionID" />
+
+                            <!--Date & Time Surgery-->
+                            <div class="form-group mb-3 row">
+                                <div class="col-6">
+                                    <label asp-for="SurgeryDate">Date<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="SurgeryDate" readonly="true" value="@Model.SurgeryDate.ToString("yyyy-MM-dd")" class="form-control input-White" type="text">
+                                    <span asp-validation-for="SurgeryDate" class="text-danger"></span>
+                                </div>
+                                <div class="col-6">
+                                    <label asp-for="SurgeryTime">Time<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="SurgeryTime" value="@Model.SurgeryTime.ToString("HH:mm")" class="form-control" type="text">
+                                    <span asp-validation-for="SurgeryTime" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--Anesthetist Assessment-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="AnaesthetistAssessment">Anesthetist assessment<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="AnaesthetistAssessment" type="text" value="@Model.AnaesthetistAssessment" class="form-control" rows="4"></textarea>
+                                <span asp-validation-for="AnaesthetistAssessment" class="text-danger"></span>
+                            </div>
+
+                            <!--Diagnosis-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="Diagnosis">Diagnosis<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="Diagnosis" type="text" value="@Model.Diagnosis" class="form-control" rows="4"></textarea>
+                                <span asp-validation-for="Diagnosis" class="text-danger"></span>
+                            </div>
+
+                            <!--Procedure Indication-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="ProcedureIndication">Procedure indication<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="ProcedureIndication" type="text" value="@Model.ProcedureIndication" class="form-control" rows="4"></textarea>
+                                <span asp-validation-for="ProcedureIndication" class="text-danger"></span>
+                            </div>
+
+                            <!--Surgery Team-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="SurgeryTeam">Surgery team<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="SurgeryTeam" type="text" value="@Model.SurgeryTeam" class="form-control" rows="4"></textarea>
+                                <span asp-validation-for="SurgeryTeam" class="text-danger"></span>
+                            </div>
+
+                            <!--Surgery Type-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="SurgeryTypeID">Surgery type<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                @{
+                                    var surgeryTypeSelectItems = surgeryTypes
+                                    .Select(item => new SelectListItem
+                                    {
+                                        Value = item.SurgeryTypeID.ToString(),
+                                        Text = item.TypeName,
+                                        Selected = item.SurgeryTypeID == Model.SurgeryTypeID
+                                    }).ToList();
+                                }
+                                <select asp-for="SurgeryTypeID" asp-items="@surgeryTypeSelectItems" class="form-select">
+                                    <option value="">Select</option>
+                                </select>
+                                <span asp-validation-for="SurgeryTypeID" class="text-danger"></span>
+                            </div>
+
+                            <!--Surgical Procedure-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="SurgicalProcedureID">Surgical procedure<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                @{
+                                    var surgicalProcedureSelectItems = surgicalProcedures
+                                    .Select(item => new SelectListItem
+                                    {
+                                        Value = item.SurgicalProcedureID.ToString(),
+                                        Text = item.ProcedureName,
+                                        Selected = item.SurgicalProcedureID == Model.SurgicalProcedureID
+                                    }).ToList();
+                                }
+                                <select asp-for="SurgicalProcedureID" asp-items="@surgicalProcedureSelectItems" class="form-select">
+                                    <option value="">Select</option>
+                                </select>
+                                <span asp-validation-for="SurgicalProcedureID" class="text-danger"></span>
+                            </div>
+
+                            <!--Other Surgery Type-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="OtherSurgeryType">Other surgery type<span class="text-danger" style="font-size: 14px;"></span></label>
+                                <textarea asp-for="OtherSurgeryType" type="text" value="@Model.OtherSurgeryType" class="form-control" rows="4"></textarea>
+                                <span asp-validation-for="OtherSurgeryType" class="text-danger"></span>
+                            </div>
+
+                            <!--Has Patients Consent-->
+                            <!--Has Patients Consent-->
+                            <div class="form-group mb-2 me-0 ms-0">
+                                <label asp-for="HasPatientsConcent">Has patient's consent?</label>
+                                <input asp-for="HasPatientsConcent" type="checkbox" />
+                                <span asp-validation-for="HasPatientsConcent" class="text-danger"></span>
+                            </div>
+
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+
+                    <div class="col-12 text-center mb-3">
+                        <button class="btn btn-primary btn-big mt-1 mx-2" type="submit" role="button"><span> Save</span></button>
+                        <a class="btn btn-big-back mt-1 mx-2" href="/Surgeries/Index"><span> Back</span></a>
+                    </div>
+                </div>
+            </div>
+
+            <!--Daily observation-->
+            <div class="col-md-3 mt-2">
+                <!--Latest Vitals-->
+                @await Component.InvokeAsync("DailyObservation")
+            </div>
+        </div>
+    </form>
+
+    <!--Body content End-->
+
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('input#SurgeryDate').datetimepicker({
+            timepicker:false,
+            format:'Y-m-d'
+        });
+        $('input#SurgeryTime').datetimepicker({
+            datepicker:false,
+            format:'H:i'
+        });
+    });
+</script>
+}

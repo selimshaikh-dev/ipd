@@ -1,0 +1,166 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model System.Collections.Generic.List<DiabeticsProfileDto>
+
+@{
+    ViewData["Title"] = "Diabetic Profile";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <div class="col-md-12">
+        <h1 class="text-center mt-3" style="font-size:36px; font-weight:700;">Diabetic Profile</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Navabr button-->
+    <nav class="navbar navbar-light mt-3">
+        <form class="container-fluid justify-content-start">
+            <a href="/Vitals/Index" class="btn btn-outline-secondary btn-search me-2 my-1" role="button">Vitals</a>
+            <a href="/DiabeticProfile/Index" class="btn btn-primary btn-search me-2 my-1" role="button">Diabetes Monitoring</a>
+            <a href="/NursingCare/Index" class="btn btn-outline-secondary btn-search me-2 my-1" role="button">Nursing Care</a>
+            <a href="/DoctorsNote/Index" class="btn btn-outline-secondary btn-search me-2 my-1" role="button">Daily Doctor's note</a>
+        </form>
+    </nav>
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!--Chief Complaint-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+        <!--Diabetic Profile-->
+        <div class="col-md-6 mt-2">
+            @*<div class="responsive_div">*@
+
+            <a href="@Url.ActionLink("Create", "DiabeticProfile")" class="btn btn-primary btn-big fs-6" style="text-align: center; line-height: 28px;"><span>Add New</span></a>
+
+            @foreach (var diabeticProfile in Model)
+            {
+                <div class="card mt-3 mb-3">
+                    <div class="card-body pb-0">
+                        <h6 style="color:#317eac;">Date Created : @diabeticProfile.DateCollected.ToString("dd-MM-yyyy, hh:mm ttt")</h6>
+                        <table class="table table-condensed table-responsive" style="font-size: 15px;">
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" class="fs-5 text-secondary shadow-sm" style="background-color: rgba(0,0,0,.03);">
+                                        <span>Diabetic profile</span>
+                                        @{
+                                            DateTime dateCreated = DateTime.Parse(diabeticProfile.DateCreated.ToString());
+                                            DateTime currentDate = DateTime.Now;
+
+                                            TimeSpan timeDifference = currentDate.Subtract(dateCreated);
+
+                                            if (timeDifference.TotalHours <= 24)
+                                            {
+                                                <span style="font-size:16px;" class="float-end"><a href="@Url.ActionLink("Edit", "DiabeticProfile", new { @DiabeticProfileID = diabeticProfile.DiabeticProfileID})" class="btn btn-primary backBtn" style="text-align: center; line-height: 28px;">Edit</a></span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Date and time collected </th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@diabeticProfile.DateCollected.ToLongDateString(), @diabeticProfile.TimeCollected.ToShortTimeString()</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Blood suger </th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@diabeticProfile.BloodSuger</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Urine suger </th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @{
+                                            if ((double)diabeticProfile.UrinSuger > 0.7)
+                                            {
+                                                <span class="text-danger">@Math.Round(diabeticProfile.UrinSuger,1) mmol/L</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Math.Round(diabeticProfile.UrinSuger,1) mmol/L</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Urine ketones </th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @{
+                                            if (diabeticProfile.UrinKetones != null)
+                                            {
+                                                if ((double)diabeticProfile.UrinKetones < 0.6)
+                                                {
+                                                    <span>Normal (@diabeticProfile.UrinKetones)</span>
+                                                }
+                                                else if ((double)diabeticProfile.UrinKetones >= 0.6 && (double)diabeticProfile.UrinKetones <= 1.0)
+                                                {
+                                                    <span>Slightly high (@diabeticProfile.UrinKetones)</span>
+                                                }
+                                                else if ((double)diabeticProfile.UrinKetones > 1.0 && (double)diabeticProfile.UrinKetones <= 2.8)
+                                                {
+                                                    <span>Moderately high (@diabeticProfile.UrinKetones) </span>
+                                                }
+                                                else if ((double)diabeticProfile.UrinKetones > 2.8)
+                                                {
+                                                    <span class="text-danger">Very high (@diabeticProfile.UrinKetones) </span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Insulin dose </th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@diabeticProfile.InsulinDose</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            @*</div>*@
+            <a href="/Clients/ManageClient?patientId=@ViewBag.ClientId" class="btn btn-sm-back" style="text-align: center; line-height: 28px;"><span>Back</span></a>
+        </div>
+
+        <!--Daily observation-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("DailyObservation")
+        </div>
+
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->

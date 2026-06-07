@@ -1,0 +1,113 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model PatientExaminationsDto
+@{
+    ViewData["Title"] = "Clinical Assessment";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var patientExamination = ViewBag.DiagonosisExamimations as List<DiagonosisExaminationDto> ?? new List<DiagonosisExaminationDto>();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Logo-->
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container mt-3">
+    <div class="col-md-10 offset-1 text-center">
+        <h1 class="mt-3" style="font-size:36px;font-weight:700">Examinations</h1>
+        <h5 style="font-weight:600">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+        <hr class="mt-4" style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 offset-md-1 mt-4">
+        @await Component.InvokeAsync("ClientClinicInfo")
+    </div>
+
+    <!--Body content Start-->
+    <form name="ExaminationsForm" asp-controller="PatientExaminations" asp-action="Create" method="post" onsubmit="return validateForm()">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row mt-3">
+            <!--Chief complaint-->
+            <div class="col-md-3 offset-md-1 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <!--Examination-->
+            <div class="col-md-7">
+                @*<div class="responsive_div">*@
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Examination
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-4">
+                        <fieldset>
+                            <!--Examination-->
+                            <div class="form-group mb-3 me-0 ms-0 row">
+                                @{
+                                    var examinationSelectItems = patientExamination
+                                    .Select(item => new SelectListItem
+                                    {
+                                        Value = item.DigonosisExaminationID.ToString(),
+                                        Text = item.DigonosisExaminationsName
+                                    });
+                                }
+
+                                <label asp-for="DigonosisExaminationIDs" class="control-label">Examination<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <select multiple asp-for="DigonosisExaminationIDs" asp-items="examinationSelectItems" class="ncd form-select js-select2">
+                                </select>
+                                <span asp-validation-for="DigonosisExaminationIDs" class="text-danger"></span>
+                            </div>
+
+                        <!--Findings-->
+                        <div class="form-group mb-3 me-2 ms-2 row">
+                            <label asp-for="Findings">Findings<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                            <textarea asp-for="Findings" name="Findings" class="form-control text-box multi-line" rows="6"></textarea>
+                            <span asp-validation-for="Findings" id="Findingserror" class="text-danger"></span>
+                        </div>  
+                    </fieldset>
+                </div>
+                <!--card-body END-->
+
+                    <div class="col-12 text-center mb-3">
+                        <button type="submit" class="btn btn-primary btn-big mx-2"> Save</button>
+                        <a href="@Url.ActionLink("Index", "PatientExaminations")" class="btn btn-big-back mx-2">Back</a>
+                    </div>
+                </div>
+                @*</div>*@
+            </div>
+        </div>
+    </form>
+    <!--Body content End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.js-select2').select2();
+        });
+
+
+          //Textare input field validation
+        function validateForm() {
+          let a = document.forms["ExaminationsForm"]["Findings"].value;
+         
+            if (a == "") {
+                document.getElementById("Findingserror").innerHTML = "The Findings is required!";
+                return false;
+            } else {
+                document.getElementById("Findingserror").innerHTML = " ";
+            }
+        }
+    </script>
+}

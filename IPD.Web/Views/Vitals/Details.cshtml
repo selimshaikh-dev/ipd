@@ -1,0 +1,303 @@
+﻿@using IPD.Domain.Dto
+@model VitalDto
+@{
+    ViewData["Title"] = "Vitals";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <div class="col-md-12 text-center">
+        <h1 class="mt-3" style="font-size:36px; font-weight:700;">Vitals</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!--Chief Complaint-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+        <div class="col-md-6">
+            @*<div class="responsive_div">*@
+            <div class="card mt-2">
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h4>Record saved successfully.</h4>
+                    </div>
+
+                    <table class="table table-condensed table-responsive">
+                        <tbody>
+                            <tr>
+                                <td width="30%">Date collected</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%" align="left">@Model.DateCollected.ToLongDateString()</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Time collected</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%" align="left">@Model.TimeCollected.ToShortTimeString()</td>
+                            </tr>
+                            <tr>
+                                <td>Weight</td>
+                                <td>:</td>
+                                <td>
+                                    @*<span>@Model.Weight</span>*@
+                                    <span> @Math.Round((double)Model.Weight, 1) kg</span>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Height</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @if (Model.Height != null)
+                                    {
+                                        <span>@Math.Round((double)Model.Height, 1) cm</span>
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Temperature</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @{
+                                        if (Model.Temperature != null)
+                                        {
+                                            string convertTemperature = Convert.ToString(Model.Temperature);
+                                            decimal temperature = Convert.ToDecimal(convertTemperature);
+
+                                            if (Model.Temperature < 36 || Model.Temperature > 38)
+                                            {
+                                                <span class="text-danger">@Math.Round(temperature, 1)&deg;C</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Math.Round(temperature, 1)&deg;C</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>MUAC</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @if (Model.MUAC != null)
+                                    {
+                                        string convertMUAC = Convert.ToString(Model.MUAC);
+                                        decimal MUAC = Convert.ToDecimal(convertMUAC);
+
+                                        if (MUAC < 11)
+                                        {
+                                            <span class="text-danger">@Math.Round(MUAC, 1) cm</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@Math.Round(MUAC, 1) cm</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td class="control-label">Blood pressure</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @if (Model.Systolic != null && Model.Diastolic != null)
+                                    {
+                                        if (Model.Systolic >= 140 && Model.Diastolic >= 90)
+                                        {
+                                            <span class="text-danger">@Model.Systolic/@Model.Diastolic mmHg</span>
+                                        }
+                                        else if (Model.Systolic >= 140 && Model.Diastolic <= 90)
+                                        {
+                                            <span class="text-danger">@Model.Systolic</span>
+
+                                            <span>/@Model.Diastolic mmHg</span>
+                                        }
+                                        else if (Model.Systolic <= 140 && Model.Diastolic >= 90)
+                                        {
+                                            <span>@Model.Systolic/</span>
+
+                                            <span class="text-danger">@Model.Diastolic mmHg</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@Model.Systolic/@Model.Diastolic mmHg</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Respiratory rate</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @{
+                                        if (Model.RespiratoryRate != null)
+                                        {
+                                            if (Model.RespiratoryRate < 12 || Model.RespiratoryRate > 30)
+                                            {
+                                                <span class="text-danger">@Model.RespiratoryRate bpm</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Model.RespiratoryRate bpm</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Pulse</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @{
+                                        if (Model.Pulse != null)
+                                        {
+                                            if (Model.Pulse < 60 || Model.Pulse > 100)
+                                            {
+                                                <span class="text-danger">@Model.Pulse bpm</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Model.Pulse bpm</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Oxygen saturation</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @if (Model.OxygenSaturation != null)
+                                    {
+                                        string convertOxygenSaturation = Convert.ToString(Model.OxygenSaturation);
+                                        decimal OxygenSaturation = Convert.ToDecimal(convertOxygenSaturation);
+
+                                        if (Model.OxygenSaturation < 90 || Model.OxygenSaturation > 100)
+                                        {
+                                            <span class="text-danger">@Math.Round(OxygenSaturation, 1)%</span>
+                                        }
+                                        else
+                                        {
+                                            <span>@Math.Round(OxygenSaturation, 1)%</span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span>-</span>
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>BMI</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @{
+                                        if (Model.BMI != null && (double)Model.BMI != 0.0)
+                                        {
+                                            <span>@Model.BMI kg/m&sup2</span>
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>Nutritional status</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    @{
+                                        if (Model.NutritionalStatus != null)
+                                        {
+                                            if (Model.NutritionalStatus != "Normal")
+                                            {
+                                                <span class="text-danger">@Model.NutritionalStatus</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Model.NutritionalStatus</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Other vitals</td>
+                                <td align="center">:</td>
+                                <td align="left">
+                                    <span>@Model.OtherVitals</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="text-center">
+                        <a class="btn btn-primary btn-big mt-3" href="@Url.ActionLink("Index", "Vitals")">Finish</a>
+                    </p>
+                </div>
+            </div>
+            @*</div>*@
+        </div>
+
+        <!--Daily observation-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("DailyObservation")
+        </div>
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->

@@ -1,0 +1,223 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+@using IPD.Web.Extensions
+@model InterDepartmentReferralDto
+@{
+    ViewData["Title"] = "InterReferrals";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var departments = ViewBag.Departments as List<DepartmentsDto> ?? new List<DepartmentsDto>();
+    var patient = ViewBag.Patient as PatientDto ?? new PatientDto();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<h1 class="text-center mt-3" style="font-size:36px;font-weight:700">Inter Department Referral</h1>
+<h5 class="text-center">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <form asp-controller="InterReferrals" asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="InterDepartmentReferralsID" />
+        <input type="hidden" asp-for="AdmissionID" />
+        <div class="row mt-3">
+            <!--Chief Complaint-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <!--Inter Department Referral-->
+            <div class="col-md-6">
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Inter department referral
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-4">
+                        <fieldset>
+                             <!--Date&Time-->
+                            <div class="form-group mb-3 me-2 ms-2 row">
+                                <div class="col-md-6 col-lg-6 col-sm-1 mt-1">
+                                    <label asp-for="Date">Date<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Date" readonly="true" value="@Model.Date.ToString("yyyy-MM-dd")" class="form-control input-White" type="text">
+                                    <span asp-validation-for="Date" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 col-lg-6 col-sm-1 mt-1">
+                                   <label asp-for="Time">Time<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Time" value="@Model.Time.ToString("HH:mm")" class="form-control" type="text">
+                                    <span asp-validation-for="Time" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--Department of-->
+                                <div class="form-group mb-3 me-4 ms-4">
+                                    @{
+                                        var departmentSelectItems = departments
+                                .Select(item => new SelectListItem
+                                {
+                                Value = item.DepartmentID.ToString(),
+                                Text = item.DepartmentName,
+                                }).ToList();
+                                    }
+                                    <label asp-for="DepartmentID">Department of<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <select asp-for="DepartmentID" asp-items="departmentSelectItems" class="form-select" id="ddlDepertment">
+                                        <option value="">Select</option>
+                                    </select>
+                                    <span asp-validation-for="DepartmentID" class="text-danger"></span>
+                                </div>
+                            <!--Department of-->
+                            @*<div class="form-group mb-3 me-2 ms-2 row">
+
+                                <div class="col-md-12 col-lg-4 col-sm-1 my-1">
+                                    @{
+                                        var departmentSelectItems = departments
+                                        .Select(item => new SelectListItem
+                                        {
+                                            Value = item.DepartmentID.ToString(),
+                                            Text = item.DepartmentName,
+                                        }).ToList();
+                                    }
+                                    <label asp-for="DepartmentID">Department of<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <select asp-for="DepartmentID" asp-items="departmentSelectItems" class="form-select">
+                                        <option value="">Select</option>
+                                    </select>
+                                    <span asp-validation-for="DepartmentID" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-sm-1 my-1">
+                                    <label asp-for="Date">Date<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Date" readonly="true" value="@Model.Date.ToString("yyyy-MM-dd")" class="form-control input-White" type="text">
+                                    <span asp-validation-for="Date" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-12 col-lg-4 col-sm-1 my-1">
+                                    <label asp-for="Time">Time<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Time" value="@Model.Time.ToString("HH:mm")" class="form-control" type="text">
+                                    <span asp-validation-for="Time" class="text-danger"></span>
+                                </div>
+                            </div>*@
+
+                            <!--Referral to-->
+                            <div class="form-group mb-3 me-4 ms-4">
+                                <label asp-for="ReferralTo">Referral to<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="ReferralTo" class="form-control text-box multi-line" rows="3"></textarea>
+                                <span asp-validation-for="ReferralTo" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mb-3 me-2 ms-2 row">
+                                <!--Patient name-->
+                                <div class="col-md-12 col-lg-6 col-sm-1 mt-1">
+                                    <label for="PatientName">Patient name<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input for="PatientName" value="@ViewBag.ClientName" class="form-control" type="text" disabled>
+                                </div>
+                                <!--Age-->
+                                <div class="col-md-12 col-lg-6 col-sm-1 mt-1">
+                                    <label for="Age">Age<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input for="Age" value="@DateTime.Now.GetYearsMonthsDaysText(patient.DOB)" class="form-control" type="text" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-group mb-3 me-2 ms-2 row">
+                                <!--Gender-->
+                                <div class="col-md-12 col-lg-6 col-sm-1 mt-1">
+                                    @{
+                                        var sexSelectedItems = Html.GetEnumSelectList(typeof(Sex));
+                                        var sexItem = sexSelectedItems.FirstOrDefault(x => x.Value == patient.Sex.ToString());
+                                        string sexText = sexItem?.Text ?? string.Empty;
+                                    }
+                                    <label for="Gender">Gender<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <select for="Gender" class="form-select" disabled>
+                                        <option value="@sexItem?.Value">@sexText</option>
+                                    </select>
+                                </div>
+                                <!--Ward-->
+                                <div class="col-md-12 col-lg-6 col-sm-1 mt-1">
+                                    <label asp-for="Ward">Ward<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Ward" class="form-control" type="text">
+                                    <span asp-validation-for="Ward" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--Referral officer-->
+                            <div class="form-group mb-3 me-4 ms-4">
+                                <div class="col-12">
+                                    <label asp-for="ReferralOfficer">Referral officer<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="ReferralOfficer" class="form-control" type="text">
+                                    <span asp-validation-for="ReferralOfficer" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--Reason(s) for Referral-->
+                            <div class="form-group mb-3 me-4 ms-4">
+                                <label asp-for="ReasonOfReferral">Reason(s) for referral<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="ReasonOfReferral" class="form-control text-box multi-line" rows="3"></textarea>
+                                <span asp-validation-for="ReasonOfReferral" class="text-danger"></span>
+                            </div>
+
+                            <!--Feedback-->
+                            <div class="form-group mb-3 me-4 ms-4">
+                                <label asp-for="Feedback">Feedback</label>
+                                <textarea asp-for="Feedback" class="form-control text-box multi-line" rows="3"></textarea>
+                                <span asp-validation-for="Feedback" class="text-danger"></span>
+                            </div>
+
+                            <!--Consulting/Officer-->
+                            <div class="form-group mb-2 me-4 ms-4">
+                                <div class="col-12">
+                                    <label asp-for="ConsultingOfficer">Consulting officer</label>
+                                    <input asp-for="ConsultingOfficer" class="form-control" type="text">
+                                    <span asp-validation-for="ConsultingOfficer" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+                    <div class="col-12 text-center mb-3">
+                        <button type="submit" class="btn btn-primary btn-big mt-1 me-3"> Save</button>
+                        <a href="@Url.ActionLink("Index", "InterReferrals")" class="btn btn-big-back mt-1">Back</a>
+                    </div>
+                </div>
+            </div>
+
+            <!--Daily observation-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("DailyObservation")
+            </div>
+        </div>
+    </form>
+    <!--Body content End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#ddlDepertment").select2();
+        $('input#Date').datetimepicker({
+            timepicker:false,
+            format:'Y-m-d',
+            maxDate: 0,
+            MinDate: 0
+        });
+        $('input#Time').datetimepicker({
+            datepicker:false,
+            format:'H:i'
+        });
+    });
+</script>
+}

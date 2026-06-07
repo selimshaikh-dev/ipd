@@ -1,0 +1,95 @@
+﻿@using IPD.Domain.Dto
+@model UserModel
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/media.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Bootstrap icon cdn-->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+<!--Essential JS cdn-Client side Validation-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" />
+ 
+<style>
+    body {
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555555;
+        background-color: #ffffff;
+        font-weight: bold;
+        margin: 0;
+        /*overflow-y:scroll;*/
+    }
+
+    hr {
+        opacity: 1;
+    }
+
+    element.style {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    .toggle-password {
+    float: right;
+    cursor: pointer;
+    margin-right: 10px;
+    margin-top: -25px;
+}
+</style>
+
+
+<div class="container" style="width:50%; margin-top:50px;">
+    <div class="card panel-default">
+        <div class="card-body" style="padding-left:30px; padding-right:30px;">
+            <img src="/images/u3.svg" width="80" height="40" class="img-fluid mx-auto d-block">
+            <h3>Login</h3>
+            <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+
+            @if (ViewBag.Message != null)
+            {
+                <div class="alert alert-danger">
+                    <h4 class="text-center">@ViewBag.Message</h4>
+                </div>
+            }
+
+            @using (Html.BeginForm())
+            {
+                <!--USERNAME-->
+                <div class="form-group-lg">
+                    <label class="control-label" for="Username">Username</label>
+                    <input asp-for="UserName" class="form-control text-box single-line valid" data-val="true" data-val-length="The field Username must be a string with a maximum length of 30." data-val-length-max="30" data-val-required="The Username is required!" id="Username" placeholder="Type username..." style="max-width:100%;" type="text" required>
+                    <span asp-for="UserName" class="text-danger"></span>
+                </div>
+                <br />
+
+                <!--PASSWORD-->
+                <div class="form-group">
+                    <label asp-for="Password" class="control-label">Password</label>
+                    <input asp-for="Password" type="password" id="password" class="form-control" required>
+                     <span asp-for="Password" class="text-danger"></span>
+                </div>
+                <br />
+
+                <div class="form-group-lg text-center" style="margin-bottom:30px;">
+                    @*<input type="hidden" name="LoginFacilityID" value="0" />*@
+                    <button type="submit" class="btn btn-primary btn-lg btn-block">
+                        <span class="bi bi-box-arrow-in-right"></span>&nbsp;&nbsp;Login
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+
+

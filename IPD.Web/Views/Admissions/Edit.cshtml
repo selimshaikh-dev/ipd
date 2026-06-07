@@ -1,0 +1,152 @@
+﻿@using IPD.Domain.Dto
+@model AdmissionsDto
+@{
+    ViewData["Title"] = "Admissions";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    string? patientId = ViewBag.PatientId as string;
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Main container Start-->
+<div class="container mt-3">
+    <div class="col-md-10 offset-1">
+        <h1 class="text-center mt-3" style="font-size:36px;">Client Admissions</h1>
+        <h5 class="text-center">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 offset-1 mt-1">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = patientId })
+    </div>
+
+    <!--Body content Start-->
+    <form asp-action="Edit" asp-controller="Admissions" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row mt-3">
+            <div class="col-md-10 offset-md-1">
+                <!--Admissions-->
+                <div class="card mx-auto mt-3">
+                    <div class="card-header text-secondary">
+                        Admissions
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-4">
+                        <input type="hidden" asp-for="PatientID" value="@patientId" />
+                        <input type="hidden" asp-for="AdmissionID" value="@Model.AdmissionID" />
+                        <fieldset class="border border-secondary p-3 me-2 ms-2">
+                            <legend class="float-none w-auto fw-bold" style="color:#555; font-size:17px;"> Admission </legend>
+                            
+                            <!--AdmissionDate-->
+                            <div class="form-group mb-3 ms-2 row">
+                                <div class="col-md-4 col-lg-4 col-sm-1 mt-1">
+                                    <label asp-for="AdmissionDate">Admission date<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="AdmissionDate" value="@Model.AdmissionDate.ToString("yyyy-MM-dd")" readonly="true" data-val-required="Admission date is required." class="form-control input-White" type="text">
+                                    <span asp-validation-for="AdmissionDate" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-4 col-lg-4 col-sm-1 mt-1">
+                                    <label asp-for="AdmissionTime">Time<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="AdmissionTime" value="@Model.AdmissionTime.ToString("HH:mm")" data-val-required="Admission time is required." class="form-control" type="text">
+                                    <span asp-validation-for="AdmissionTime" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--AssaignDoctor-->
+                            <div class="form-group mb-3 col-md-8 col-lg-8 col-sm-1 pe-3 ms-3">
+                                <label asp-for="AssaignDoctor">Doctor assigned<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <input asp-for="AssaignDoctor" value="@Model.AssaignDoctor" type="text" class="form-control">
+                                <span asp-validation-for="AssaignDoctor" class="text-danger"></span>
+                            </div>
+                        </fieldset>
+
+                        <fieldset class="border border-secondary p-3 me-2 ms-2 mb-2 mt-3">
+                            <legend class="float-none w-auto fs-6 fw-bold" style="color:#555; font-size:17px;"> Next of kin</legend>
+                            <div class="form-group mb-3 me-2 ms-2 row">
+                                <!--Nextofkin-->
+                                <div class="col-md-6 col-sm-1">
+                                    <label asp-for="NextOfKin">Name<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="NextOfKin" type="text" class="form-control">
+                                    <span asp-validation-for="NextOfKin" class="text-danger"></span>
+                                </div>
+
+                                <!--Relationship-->
+                                <div class="col-md-6 col-sm-1">
+                                    <label asp-for="Relationship">Relationship<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Relationship" type="text" class="form-control">
+                                    <span asp-validation-for="Relationship" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--ContactAddress-->
+                            <div class="form-group mb-3 me-4 ms-4">
+                                <label asp-for="ContactAddress">Contact address<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="ContactAddress" value="@Model.ContactAddress" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="ContactAddress" class="text-danger"></span>
+                            </div>
+
+                            <!--Cellphone-->
+                            <div class="form-group mb-3 me-2 ms-2 row">
+                                <label class="control-label" asp-for="Cellphone">Cellphone<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <!--CountryCode-->
+                                <div class="col-md-3 col-sm-1 mt-1">
+                                    <input asp-for="CellphoneCountryCode" value="@Model.CellphoneCountryCode" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length="Cellphone country code should be atleast 3 digits" data-val-required="Country code is required." maxlength="3" placeholder="Country code" title="The Country code must be a number with a maximum length of 3." type="text">
+                                    <span asp-validation-for="CellphoneCountryCode" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-md-6 col-sm-1 mt-1">
+                                    <input asp-for="Cellphone" value="@Model.Cellphone" class="form-control text-box single-line" data-val-length="Cellphone should be atleast 8 digits" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" placeholder="Cellphone number" title="Cellphone should be atleast 8 digits." type="text">
+                                    <span asp-validation-for="Cellphone" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 text-center">
+            <div class="form-group fs-3">
+                <button type="submit" id="btnSave" class="btn btn-primary btn-big mt-3 mx-2" value="Create">
+                    <span>Save</span>
+                </button>
+                <a href="/Admissions?patientId=@ViewBag.PatientId" class="btn btn-big-back mt-3 mx-2">Back</a>
+            </div>
+        </div>
+
+        <!--Body content End-->
+    </form>
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script>
+        $(document).ready(function() {
+            $('input#AdmissionDate').datetimepicker({
+                timepicker:false,
+                format:'Y-m-d',
+                maxDate: 0,
+                MinDate: 0
+            });
+            $('input#AdmissionTime').datetimepicker({
+                datepicker:false,
+                format:'H:i'
+            });
+        });
+
+        //Cell phone validation
+        function onlyNumberKey(evt) {
+
+        // Only ASCII character in that range allowed
+        let ASCIICode = (evt.which) ? evt.which : evt.keyCode
+        if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+            return false;
+        return true;
+    };
+</script>
+}

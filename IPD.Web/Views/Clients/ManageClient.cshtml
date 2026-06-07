@@ -1,0 +1,146 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+@model PatientDto
+
+@{
+    ViewData["Title"] = "Manage client";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+<style>
+    /*This is CSS which is use in our Toast Message UI*/
+    .toast {
+        border-radius: 62px;
+        min-width: 300px;
+        font-weight: 600;
+        background-color: #0c0c0c8a;
+        font-size: 16px;
+        box-shadow: 0 1px 1px rgba(0,0,0,.25), 0 0 1px rgba(0,0,0,.35);
+        color: #f9f7f7f7;
+        margin-top: 5px;
+    }
+</style>
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container">
+
+    <h1 class="text-center fw-bold" style="font-size:36px;">Client Management</h1>
+
+    <div class="col-md-10 offset-1 mt-2">
+        @*@await Component.InvokeAsync("ClientInfo", new { patientId = Model.PatientID.ToString(), isShowAdmissionInformation = true })*@
+        @await Component.InvokeAsync("ClientClinicInfo")
+    </div>
+
+    <div class="container" style="width:60%; margin-top:30px;">
+        <div class="row text-center g-3 p-2">
+            <!--Clinical Assessment-->
+            <div class="col-sm-12 col-md-4 col-lg-4 ClCard">
+                <a href="@Url.ActionLink("Index", "ChiefComplaints")">
+                    <div class="card w-100 box border-dark text">
+                        <div class="text-center pt-2">
+                            <img src="/images/img1.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-2" />
+                            <span class="fw-bold fs-6 text-dark">Clinical<br />Assessment</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!--Daily Observation-->
+            <div class="col-sm-12 col-md-4 col-lg-4 ClCard">
+                <a href="@Url.ActionLink("Index", "Vitals")">
+                    <div class="card w-100 box border-dark text">
+                        <div class="text-center pt-2">
+                            <img src="/images/img2.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-2" />
+                            <span class="fw-bold fs-6 text-dark">Daily<br />Observation</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!--Partograph-->
+            <div class="col-sm-12 col-md-4 col-lg-4 ClCard">
+                @if (Model.Sex == (byte)Sex.Female)
+                {
+                    <a href="@Url.ActionLink("Index", "Partograph")">
+                        <div class="card w-100 box border-dark text">
+                            <div class="text-center pt-2">
+                                <img src="/images/img5.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3" />
+                                <span class="fw-bold fs-6 text-dark">Partograph</span>
+                            </div>
+                        </div>
+                    </a>
+                }
+                else
+                {
+                    <div class="card w-100 box border-dark text wrapper--error-partograph">
+                        <div class="text-center pt-2">
+                            <img src="/images/img5.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3" />
+                            <span class="fw-bold fs-6 text-dark">Partograph</span>
+                        </div>
+                    </div>
+                }
+
+            </div>
+
+            <div class="col-md-2"></div>
+            <!--Surgery-->
+            <div class="col-sm-12 col-md-4 col-lg-4 ClCard">
+                <a href="@Url.ActionLink("Index", "Surgeries")">
+                    <div class="card w-100 box border-dark text">
+                        <div class="text-center pt-2">
+                            <img src="/images/img4.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3" />
+                            <span href="/Surgeries/Index" class="fw-bold fs-6 text-dark">Surgery</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!--Referral-->
+            <div class="col-sm-12 col-md-4 col-lg-4 ClCard">
+                <a href="@Url.ActionLink("ReferralOptions", "Referral")">
+                    <div class="card w-100 box border-dark text">
+                        <div class="text-center pt-2">
+                            <img src="/images/img6.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3" />
+                            <span href="/InternationalReferral/ReferralOptions" class="fw-bold fs-6 text-dark">Referral</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Main container End-->
+<br />
+<br />
+
+<div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+    <div id="toast--error-partograph" class="toast hide align-items-center text-white bg-danger" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-bold fs-6">
+                <i class="bi bi-exclamation-triangle"></i>
+                Warning! <br />
+                <span>Not applicable for male patient.</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+<script>
+    $(document).ready(function(){
+        $(".wrapper--error-partograph").click(function() {
+            var errorToastNode = document.getElementById('toast--error-partograph')
+            var errorToast = new bootstrap.Toast(errorToastNode, { delay: 3000 });
+            errorToast.show();
+        });
+    });
+</script>
+}

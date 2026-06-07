@@ -1,0 +1,70 @@
+﻿@using IPD.Domain.Dto
+@model DateTimeDto
+@{
+    ViewData["Title"] = "Report";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var paitents = ViewBag.Patients as List<ReportDto> ?? new List<ReportDto>();
+}
+<!--css-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<div class="col-md-10 text-center offset-1 mt-2">
+    <h1 class="mb-2 fw-bold" style="font-size:30px;"></h1>
+    <hr class="mt-1" style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+</div>
+
+<div class="container">
+    <div class="col-sm-12 col-md-12 col-lg-12 ">
+    <form asp-controller="Report" asp-action="PatientList" method="post" name="PatientListForm">
+        @*<div class="card mb-1">
+            <div class="card-body border-0" style="background-color: #EBEDEF ;">
+                <h5 class="text-center">Patient list</h5>
+            </div>
+        </div>*@
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="text-center">Patient list</h5>
+             </div>
+
+            <div class="card-body">
+                <div class="card mx-auto mt-2">
+                    <div class="form-group mb-4 mt-3 me-2 ms-2 row">
+                        <div class="col-md-12 col-lg-4 col-sm-1 mt-1">
+                            <label for="Date" class="col-md-3 text-end mt-1">From Date:</label>
+                            <div class="col-md-9">
+                                <input type="date" asp-for="FromDate" value="" data-val-required="The Date is required." class="form-control input-White" required>
+                                <span for="FromDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-4 col-sm-1 mt-1">
+                            <label for="" class="col-md-3 text-end mt-1">To Date:</label>
+                            <div class="col-md-9">
+                                <input type="Date" asp-for="ToDate" value="" data-val-required="The DateCollected is required." class="form-control input-White" required>
+                                <span for="ToDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-lg-4 col-sm-1 mt-3">
+                            <button type="submit" class="btn btn-primary mb-3  mx-2 mt-3" asp-action="PatientList">
+                                Search
+                            </button>
+                            <a href="/Clients/profileSearch" class="btn btn-sm-back"><span>Back</span></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+
+
+
+
+
+
+

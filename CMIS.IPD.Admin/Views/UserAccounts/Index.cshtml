@@ -1,0 +1,189 @@
+﻿@model IEnumerable<IPD.Domain.Entities.UserAccount>
+
+@{
+   ViewData["Title"] = "UserAccount";
+   Layout = "~/Views/Shared/_CustomLayout.cshtml";
+   List<IPD.Domain.Entities.UserAccount> activeUsers = (List<IPD.Domain.Entities.UserAccount>)ViewBag.ActiveUsers;
+   List<IPD.Domain.Entities.UserAccount> inactiveUsers = (List<IPD.Domain.Entities.UserAccount>)ViewBag.InactiveUsers;
+}
+<!--Custom CSS-->
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
+
+
+<div class="row custom-margin-parent-div gx-4 gy-4">
+   @Html.Partial("_LeftNavigation")
+
+   <div class="col-lg-9 col-md-8 col-sm-12">
+      <div class="row p-lg-left-4">
+         <h2>User Accounts</h2>
+         <hr />
+         <div class="row">
+            <ul class="nav nav-tabs cust-css" id="myTab" role="tablist">
+               <li class="nav-item" role="presentation">
+                  <button class="nav-link active text-primary" id="home-tab" data-bs-toggle="tab" data-bs-target="#ACTIVE_USERS" type="button" role="tab" aria-controls="home" aria-selected="true">Active Users</button>
+               </li>
+               <li class="nav-item" role="presentation">
+                  <button class="nav-link text-primary" id="profile-tab" data-bs-toggle="tab" data-bs-target="#IN_ACTIVE_USERS" type="button" role="tab" aria-controls="profile" aria-selected="false">Inactive User</button>
+               </li>
+               <li class="nav-item" role="presentation">
+                  <button class="nav-link text-primary" id="contact-tab" data-bs-toggle="tab" data-bs-target="#USER_ACCESS" type="button" role="tab" aria-controls="contact" aria-selected="false">Access Management</button>
+               </li>
+            </ul>
+         </div>
+
+         <div class="row">
+            <div class="tab-content" id="myTabContent">
+               <!--ACTIVE USERS-->
+               <div class="tab-pane fade show active" id="ACTIVE_USERS" role="tabpanel" aria-labelledby="home-tab">
+                  <div class="mb-3 mt-3 row">
+                     <label for="activeUsersInput" class="col-lg-8 col-md-12 col-sm-12 text-info col-form-label">Type : First Name / Last Name / Cellphone / Username</label>
+                     <div class="col-lg-4 col-md-8 col-sm-12">
+                        <input type="text" class="form-control form-size" id="activeUsersInput" placeholder="Search..">
+                     </div>
+                  </div>
+
+                  <div class="row table-responsive">
+                     @if (!string.IsNullOrEmpty(ViewBag.Message))
+                     {
+                        <div class="alert alert-success">
+                           @ViewBag.Message
+                        </div>
+                     }
+
+                     <table class="table table-responsive font-size">
+                        <tr>
+                           <th>@Html.DisplayNameFor(model => model.FirstName)</th>
+                           <th>Last Name</th>
+                           <th>Cell Phone</th>                         
+                           <th>User Name</th>
+                           <th>Account Status</th>
+                           <th></th>
+                        </tr>
+                        <tbody id="myTable">
+                           @foreach (var item in activeUsers)
+                           {
+                              <tr>
+                                 <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                                 <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                                 <td>@Html.DisplayFor(modelItem => item.Cellphone)</td>
+                                 <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                                 <td align="center">@Html.DisplayFor(modelItem => item.AccountStatus)</td>
+                                 <td align="right">@Html.ActionLink("Deactivate", "DeactivateUserAccount", "UserAccounts", new { id = item.UserAccountID }, new { @class = "btn btn-danger btn-sm" })</td>
+                              </tr>
+                           }
+                        </tbody>
+                     </table>
+                  </div>
+
+               </div>
+
+               <!--INACTIVE USERS-->
+               <div class="tab-pane fade" id="IN_ACTIVE_USERS" role="tabpanel" aria-labelledby="profile-tab">
+                  <div class="mb-3 mt-3 row">
+                     <label for="deactivatedUsersInput" class="col-lg-8 col-md-12 col-sm-12 text-info col-form-label">Type : First Name / Last Name / Cellphone / Username</label>
+                     <div class="col-lg-4 col-md-8 col-sm-12">
+                        <input type="text" class="form-control form-size" id="deactivatedUsersInput" placeholder="Search..">
+                     </div>
+                  </div>
+
+                  <div class="row table-responsive">
+                  @if (!string.IsNullOrEmpty(ViewBag.Message))
+                  {
+                     <div class="alert alert-success">
+                        @ViewBag.Message
+                     </div>
+                  }
+
+                     <table class="table table-responsive font-size">
+                        <tr>
+                           <th>@Html.DisplayNameFor(model => model.FirstName)</th>
+                           <th>Last Name</th>
+                           <th>Cell Phone</th>
+                           <th>User Name</th>
+                           <th>Account Status</th>
+                        <th></th>
+                     </tr>
+
+                     <tbody id="myTable">
+                        @foreach (var item in inactiveUsers)
+                        {
+                           <tr>
+                              <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                              <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                              <td>@Html.DisplayFor(modelItem => item.Cellphone)</td>
+                              <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                              <td align="center">@Html.DisplayFor(modelItem => item.AccountStatus)</td>
+                              <td align="right">@Html.ActionLink("Activate", "ActivateUserAccount", "UserAccounts", new { id = item.UserAccountID }, new { @class = "btn btn-primary  btn-sm" })</td>
+                           </tr>
+                        }
+                     </tbody>
+                  </table>
+                  </div>
+                  </div>
+
+               <!--USER ACCESS-->
+               <div class="tab-pane fade" id="USER_ACCESS" role="tabpanel" aria-labelledby="contact-tab">
+
+                  <div class="mb-3 mt-3 row">
+                     <label for="userAccessInput" class="col-lg-8 col-md-12 col-sm-12 text-info col-form-label">Type : First Name / Last Name / Cellphone / Username</label>
+                     <div class="col-lg-4 col-md-8 col-sm-12">
+                        <input type="text" class="form-control form-size" id="userAccessInput" placeholder="Search..">
+                     </div>
+                  </div>
+
+                  <div class="row table-responsive">
+
+                  @if (!string.IsNullOrEmpty(ViewBag.Message))
+                  {
+                     <div class="alert alert-success">
+                        @ViewBag.Message
+                     </div>
+                  }
+
+                     <table class="table table-responsive font-size">
+                        <tr>
+                           <th>@Html.DisplayNameFor(model => model.FirstName)</th>
+                           <th>Last Name</th>
+                           <th>Cell Phone</th>
+                           <th>User Name</th>
+                           <th>Account Status</th>
+                           <th></th>
+                           <th></th>
+                     </tr>
+                     <tbody id="myTable">
+                        @foreach (var item in activeUsers)
+                        {
+                           <tr>
+                              <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                              <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                              <td>@Html.DisplayFor(modelItem => item.Cellphone)</td>
+                              <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                              <td>@Html.DisplayFor(modelItem => item.AccountStatus)</td>
+                              <td>@Html.ActionLink("Change Role", "Edit", "UserAccounts", new { id = item.UserAccountID }, new { @class = "btn btn-primary  btn-sm btn-custom-line-hight" })</td>
+                              <td align="right">@Html.ActionLink("User Access", "UserAccess", new { id = item.UserAccountID }, new { @class = "btn btn-primary  btn-sm" })</td>
+                           </tr>
+                        }
+                     </tbody>
+                  </table>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+</div>
+
+@section Scripts {
+   <script type="text/javascript">
+      $(document).ready(function() {
+          $("#activeUsersInput, #deactivatedUsersInput, #userAccessInput").on("keyup", function() {
+              var value = $(this).val().toLowerCase();
+              $("#myTable tr").filter(function() {
+                  $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+              });
+          });
+      });
+   </script>
+}

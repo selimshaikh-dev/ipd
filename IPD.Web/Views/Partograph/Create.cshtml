@@ -1,0 +1,890 @@
+﻿@using IPD.Web.Extensions;
+@using static IPD.Domain.Constants.Enumerators
+@model IPD.Domain.Dto.PartographDto
+
+@{
+    ViewData["Title"] = "Partograph";
+    Layout = "~/Views/Shared/_PartographLayout.cshtml";
+    var patient = ViewBag.Patient as ClientsInfoDto ?? new ClientsInfoDto();
+    var clientName = ViewBag.ClientName as string;
+    var facilityCode = ViewBag.facilityCode as string;
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+    var baseurl = ViewBag.Baseurl as string;
+}
+<style>
+    /*This is CSS which is use in our Toast Message UI*/
+    .toast {
+        border-radius: 62px;
+        min-width: 300px;
+        font-weight: 600;
+        background-color: #0c0c0c8a;
+        font-size: 16px;
+        box-shadow: 0 1px 1px rgba(0,0,0,.25), 0 0 1px rgba(0,0,0,.35);
+        color: #f9f7f7f7;
+        margin-top: 5px;
+    }
+</style>
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/Partograph.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Partograph-HighCharts/CervixGraph.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Partograph-HighCharts/LiquorModuling.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<form asp-action="Create" asp-controller="Partograph" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="container-fluid">
+        @* <div class="row">*@
+        <div class="col-md-12">
+            <div class="card-design mt-5 mb-3 partographInfo">
+                <div class="card fw-bold border-0 text-dark shadow-sm" style="background-color:#f5f5f5;">
+                    <div class="card-body ms-3">
+                        <div class="row">
+                            <input asp-for="PartographID" type="hidden" id="hdnPartographID" value="@Model.PartographID" />
+                            <input type="hidden" id="baseurl" value="@baseurl" />
+                            <input type="hidden" id="InitiateTimeValue" value="@Model.InitiateTime" />
+                            <!--Name-->
+                            <div class="col-md-4">
+                                <label style="">Name :</label>
+                                <span> @clientName</span>
+                            </div>
+
+                            <!--Age-->
+                            <div class="col-md-4">
+                                @{
+                                    string ageText = $"{DateTime.Now.GetYearsMonthsDaysText(patient.DOB)}".Trim();
+                                    if (ageText == "()")
+                                    {
+                                        ageText = string.Empty;
+                                    }
+                                }
+                                <label>Age : </label>
+                                <span class="">@ageText</span>
+                            </div>
+
+                            <!--Hospital code-->
+                            <div class="col-md-4">
+                                <label class=""> Hospital code :</label>
+                                <span> @ageText</span>
+                            </div>
+                        </div>
+
+                        <!--Admission Date/time-->
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <label>Date of admission: </label>&nbsp;
+                                <span> @admission.AdmissionDate.ToLongDateString()</span>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label>Time of admission:</label>
+                                <span>@admission.AdmissionTime.ToShortTimeString()</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 form-group">
+                            <!--Gravida-->
+                            <div class="col-md-3">
+                                <label asp-for="Gravida" class="me-3">Gravida <span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                <select asp-for="Gravida" class="col-md-4">
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                </select>
+                                <span asp-validation-for="Gravida" class="text-danger"></span>
+                            </div>
+
+                            <!--Parity-->
+                            <div class="col-md-1 mt-1">
+                                <label asp-for="Parity">Parity <span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            </div>
+                            <div class="col-md-2">
+                                <input asp-for="Parity" id="Parity"  onkeypress="return onlyNumberKey(event)" type="text" class="form-control">
+                                <span asp-validation-for="Parity" class="text-danger wrap"></span>
+                            </div>
+
+                            <!--SBOrNND-->
+                            <div class="col-md-1 mt-1">
+                                <label asp-for="SBOrNND">SB/NND</label>
+                            </div>
+                            <div class="col-md-2">
+                                <input asp-for="SBOrNND" class="form-control" type="text" />
+                            </div>
+
+                            <!--Abortion-->
+                            <label asp-for="Abortion" class="col-md-1 mt-1">Abortion</label>
+                            <div class="col-md-2">
+                                <input asp-for="Abortion" id="Abortion" class="form-control" type="text" />
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 form-group">
+                            <label for="LMP" class="col-md-1 mt-1">LMP <span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            <div class="col-md-2" style="margin-left:-26px;">
+                                <input for="LMP" onkeypress="return onlyNumberKey(event)" class="form-control" name="LMP" id="lmpDate" value="" type="text" data-val-required="LMP is required." required>
+                            </div>
+
+                            <!--EDD-->
+                            <label asp-for="EDD" class="col-md-1 ms-4 mt-1">EDD <span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            <div class="col-md-2">
+                                <input asp-for="EDD" name="EDD" class="form-control" id="eddDate" readonly value="@Model.EDD.ToString("yyyy-MM-dd")" type="text">
+                                @*<span asp-validation-for="EDD" class="text-danger"></span>*@
+                            </div>
+
+                            <!--BorderlineRiskFactors--->
+                            <div class="col-md-3 mt-1">
+                                <label asp-for="BorderlineRiskFactors" style="margin-left:-12px;">Pelvis Adequate/Borderline Risk Factors</label>&nbsp;
+                            </div>
+                            <div class="col-md-3">
+                                <input asp-for="BorderlineRiskFactors" class="form-control" type="text" style="width: 202px;height: 25px;" />
+                            </div>
+                        </div>
+
+                        <div class="row mt-3 form-group">
+                            <!--Height-->
+                            <label asp-for="Height" class="col-md-1 mt-1">Height</label>
+                            <div class="col-md-2" style="margin-left:-26px;">
+                                <input asp-for="Height" class="form-control" />
+                            </div>
+
+                            <div class="col-md-3 mt-1">
+                                <label asp-for="RegularContractions">Regular Contractions Started at <span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            </div>
+                            <div class="col-md-2" style="margin-left:-50px;">
+                                <input asp-for="RegularContractions" class="form-control" value="@Model.RegularContractions.ToString("yyyy-MM-dd")" type="text" data-val-required="Regular contractions is required." />
+                                <span asp-validation-for="RegularContractions" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-2 mt-1">
+                                <label asp-for="MembranesRuptured" style="margin-left:-10px;">Membranes Ruptured at <span class="text-danger" style="font-size: 15px;"> *</span></label>
+                            </div>
+                            <div class="col-md-2">
+                                <input asp-for="MembranesRuptured" class="form-control" value="@Model.MembranesRuptured.ToString("yyyy-MM-dd")" type="text" data-val-required="Membranes ruptured is required." />
+                                <span asp-validation-for="MembranesRuptured" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="form-group row">
+                                <div class="col-2 mt-4">
+                                    <label for="InitiatedOn">Partograph Initiated on:</label>
+                                </div>
+                                <div class="col-2">
+                                    <label asp-for="InitiateDate">Date<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                    <input asp-for="InitiateDate" id="InitiateDate" value="@Model.InitiateDate.ToString("yyyy-MM-dd")" class="form-control"
+                                           type="text" style="width:110px;" data-val-required="Initiate date is required." />
+                                    <span asp-validation-for="InitiateDate" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-2 .offset-md-4" style="margin-left:-3rem !important">
+                                    <label asp-for="InitiateTime">Time<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                    <select asp-for="InitiateTime" required id="InitiateTime" class="MembranesRuptured form-control" style="width:110px;" data-val-required="Initiate time is required.">
+                                        <option value="">Select</option>
+                                    </select>
+                                    <span asp-validation-for="InitiateTime" class="text-danger"></span>
+                                </div>
+                                <div class="col-2 mt-3">
+                                    <button type="submit" id="btnInitiate" class="btn btn-primary mx-2 customBtn">
+                                        Initiate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*</div>*@
+    </div>
+</form>
+
+<!--Partograph-->
+<div class="row">
+
+    <div class="col-md-10">
+        <div class="scroll-auto">
+            <div class="card-body">
+                <div class="row" style="padding-left: 7px !important;">
+                    <div class="GraphsGap">
+                    </div>
+
+                    <figure class="highcharts-figure">
+                        <div id="FetalHeartRate"></div>
+                    </figure>
+                </div>
+            </div>
+
+            <!-- #region LiquorMolding -->
+            <div class="card-body" style="margin-top: -15px;">
+                <div class="row">
+                    <div class="ContractionTitle">
+                        <p>Liquor</p>
+                        <p> Moulding</p>
+                    </div>
+
+                    <div class="col-md-7">
+                        <table id="LiquorMoldingTable" class="table table-bordered tbl">
+                            <tr style="height: 3em;" id="LiquorRow">
+                            </tr>
+                            <tr style="height: 3em;" id="MoldingRow">
+                            </tr>
+                            <tr style="height: 4em; border-style: none;" id="LMTimeRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!-- Cervix -->
+            <div class="card-body pb-2">
+                <div class="row" style="margin-left: -1px !important; margin-right: 1px !important;">
+                    <div class="GraphsGap">
+                    </div>
+                    <figure class="highcharts-figure">
+                        <div id="cervix"></div>
+                    </figure>
+                </div>
+            </div>
+            <!-- end cervix -->
+            <!-- Contractions-->
+            <div class="card-body pt-2">
+                <div class="row">
+                    <div class="col-md-7 offset-md-1">
+                        <table class="table tbl" style="border:none; border-bottom: none;">
+                            <tr style="height: 2em; border-bottom: none;" id="legend">
+                                <td class="TempDataCell" style="border-bottom: none;"></td>
+                                <td class="TempDataCell" style="border-bottom: none;"><b>Contractions Less than 20 seconds</b></td>
+                                <td class="TempDataCell" style="border-bottom: none;"></td>
+                                <td class="TempDataCell" style="border-bottom: none;"><b>Contractions lasting between 20-40 seconds</b></td>
+                                <td class="TempDataCell" style="border-bottom: none;"></td>
+                                <td class="TempDataCell" style="border-bottom: none;"><b>Contractions more than 40 seconds</b></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-2 mt-1">
+                <div class="row">
+                    <span style="font-size: 12px;" class="ContractionTitle mt-4">Contractions per 10 mins</span>
+                    <div class="col-md-7">
+
+                        <table id="ContractionsTable" class="table table-bordered tbl">
+                            <tr style="height: 2em;" id="FifthCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="FourthCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="ThirdCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="SecondCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="FirstCRow">
+                            </tr>
+                            <tr style="height: 3em; border-style: none;" id="ContractionTimeCRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Contractions -->
+            <!-- Oytocin-->
+            <div class="card-body mt-2">
+                <div class="row" style="margin-top:70px !important;">
+                    <div class="ContractionTitle">
+                        <p style="font-size: 14px; margin-bottom:0rem !important;">Oxytocin U/L</p>
+                        <p style="font-size: 14px;margin-bottom:0rem !important;">Drops/min</p>
+                    </div>
+                    <div class="col-md-7">
+                        <table id="OxytocinDropTable" class="table table-bordered tbl">
+                            <tr style="height: 3em;" id="OxytocinRow">
+                            </tr>
+                            <tr style="height: 3em;" id="DropsRow">
+                            </tr>
+                            <tr style="height: 3em; border-style: none;" id="OxytocinTimeRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Oxytocin-->
+            <!-- Drugs-->
+            <div class="card-body mt-2">
+                <div class="row" style="margin-top : 55px !important">
+                    <span class="ContractionTitle mt-3">Drugs given and IV fluids</span>
+                    <div class="col-md-7">
+
+                        <table id="DrugsTable" class="table table-bordered tbl">
+                            <tr style="height: 10em;">
+                            </tr>
+                            <tr style="height: 7em; text-align:center; border-style: none;" id="DrugsTimeRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--End Drugs-->
+            <!-- BP -->
+            <div class="card-body mt-4">
+                <div class="row" style="padding-left: 7px !important;">
+                    <div class="GraphsGap">
+                    </div>
+                    <figure class="highcharts-figure">
+                        <div id="PulseBP"></div>
+                    </figure>
+                </div>
+            </div>
+            <!-- End BP-->
+            <!-- Temp -->
+            <div class="card-body pt-1">
+                <div class="row">
+                    <span class="ContractionTitle mt-3">Temp °C</span>
+                    <div class="col-md-7">
+
+                        <table id="TempTable" class="table table-bordered tbl">
+                            <tbody>
+                                <tr style="height: 5em;"></tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="height: 3em; border-style: none;" id="TempTimeRow"></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Temp-->
+            <!-- Urine -->
+            <div class="card-body mt-2">
+                <div class="row" style="margin-top:60px !important">
+                    <div class="ContractionTitle">
+                        <p style="margin-bottom: 15px !important;">Protein</p>
+                        <p style="margin-bottom: 15px !important;">Acetone</p>
+                        <p style="margin-bottom: 15px !important;">Volume</p>
+                    </div>
+
+                    <div class="col-md-7">
+                        <table id="UrineTable" class="table table-bordered tbl">
+                            <tr style="height: 3em;" id="ProteinRow">
+                            </tr>
+                            <tr style="height: 3em;" id="AcetoneRow">
+                            </tr>
+                            <tr style="height: 3em;" id="VolumeRow">
+                            </tr>
+                            <tr style="height: 6em; border-style: none;" id="UrineTableRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Urine-->
+        </div>
+    </div>
+
+
+    <div class="col-md-2">
+        @*
+        <div>
+        <div class="row">
+        <button type="button" class="btn btn-primary btn-custom btn-sm" id="ShowPartoInputs"> Show Partograph Inputs</button>
+        <button type="button" class="btn btn-primary btn-custom btn-sm" id="HidePartoInputs"> Hide Partograph Inputs</button>
+
+        </div>
+        </div>*@
+
+        <!--Fetal Rate-->
+        <div class="row showInput p-2 b-1" style="margin-bottom : 60px !important; margin-top : 100px !important">
+            <div class="col-md-6 p-1">
+                <label for="firstname">Fetal Rate</label>
+                <input type="number" id="FetalOption" class="form-control" />
+
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="firstname">Time</label>
+                <select id="FetalTimeOption" class="FetalTimeOption  form-control">
+                    <option value="">Select</option>
+
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary form-control btn-sm btn-custom" type="button" value="Update Fetal Heart Rate" onclick="UpdateFetalRate('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Liquor-->
+        <div class="row showInput p-2 b-1 mb-2" style="margin-bottom : 5px !important">
+            <div class="col-md-8 p-1">
+                <label for="Liquor">Liquor</label>
+                <select id="Liquor" name="Liquor" class="form-control">
+                    <option value="">Select</option>
+                    <option value="I">I (Intact membrane)</option>
+                    <option value="C">C (Membrane is raptured but the color is clear)</option>
+                    <option value="B">B (Membrane raptured and fluid contains blood stain)</option>
+                    <option value="M">M (Raptured membrane with meconium stain)</option>
+                    <option value="A">A (No liquor)</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 p-1">
+                <label for="firstname">Time</label>
+                <select id="LiquorTimeDropdown" class="LiquorTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+            <div class="col-md-12 p-1 pt-0 pb-2">
+                <input class="btn btn-primary btn-sm form-control btn-custom" type="button" value="Update Liquor" onclick="UpdateLiquor('@Model.PartographID')" />
+            </div>
+
+            <!--Moulding-->
+            <div class="col-md-8 p-1">
+                <label for="Molding">Moulding</label>
+                <select id="Molding" name="Molding" class="form-control">
+                    <option value="">Select</option>
+                    <option value="0">0 (Fetal head is in normal position)</option>
+                    <option value="+">+ (Head bones touched each other and no gap in between)</option>
+                    <option value="++">++ (Head bones overlaped each othe)</option>
+                    <option value="+++">+++ (Head bones overlapped and not returning to the normal position)</option>
+                </select>
+            </div>
+
+            <div class="col-md-4 p-1">
+                <label for="time">Time</label>
+                <select id="MoldingTimeDropdown" class="MoldingTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+            <div class="col-md-12 p-1">
+                <input class="btn btn-primary btn-sm form-control btn-custom" type="button" value="Update Molding" onclick="UpdateMolding('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Cervix-->
+        <div class="row showInput p-2 b-1 mb-2" style="margin-bottom : 75px !important; margin-top : 65px !important">
+            <div class="col-md-6 p-1">
+                <label for="cervix">Cervix</label>
+                <select id="CervixSelectOption" class="CervixSelectOption form-control ">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="time">Time</label>
+                <select id="CervixTimeOption" class="CervixTimeOption form-control ">
+                    <option value="">Select</option>
+                </select>
+            </div>
+            <div class="col-md-12 p-1 pt-0 pb-2">
+                <input class="btn btn-primary btn-sm btn-custom form-control" type="button" value="Update Cervix" onclick="UpdateCervix('@Model.PartographID')" />
+            </div>
+
+            <!--Descent of Head-->
+            <div class="col-md-6 p-1">
+                <label for="descentOfHead" style="height : 36px !important">Descent of Head</label>
+                <select id="DescentHeadSelectOption" class="DescentHeadSelectOption form-control">
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="col-md-6 p-1">
+                <label for="time" style="height : 36px !important">Time</label>
+
+                <select id="DescentHeadTimeOption" class="DescentHeadTimeOption form-control">
+                    <option value="">Select</option>
+
+                </select>
+            </div>
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary btn-md btn-custom form-control" type="button" value="Update Descent Head" onclick="UpdateDescentHead('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Contractions-->
+        <div class="row showInput p-2 b-1 mb-2" style="margin-bottom : 15px !important">
+            <div class="col-md-6 p-1">
+                <label for="Contraction">Contractions</label>
+                <select id="Contraction" name="Contraction" class="form-control">
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Contraction">Time</label>
+                <select id="ContractionTimeDropdown" class="ContractionTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1">
+                <label for="CDuration">Duration</label>
+                <select id="CDuration" name="CDuration" class="form-control">
+                    <option value="">Select</option>
+                    <option value="1">Contractions Less than 20 seconds</option>
+                    <option value="2">Contractions lasting between 20-40 seconds </option>
+                    <option value="3">Contractions more than 40 seconds</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary btn-md btn-custom form-control" type="button" value="Update Contractions" onclick="UpdateContraction('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Oxytocin-->
+        <div class="row showInput p-2 b-1 mb-2">
+            <div class="col-md-6 p-1">
+                <label for="Oxytocin">Oxytocin U/L</label>
+                <select id="Oxytocin" name="Oxytocin" class="form-control">
+                    <option value="">Select</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Drops">Drops/min</label>
+                <select id="Drops" name="Drops" class="form-control">
+                    <option value="">Select</option>
+                    <option value="60">60</option>
+                    <option value="120">120</option>
+                    <option value="140">140</option>
+                    <option value="280">280</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1">
+                <label for="Drops">Time</label>
+                <select id="OxytocinTimeDropdown" class="OxytocinTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary btn-sm btn-custom form-control" type="button" value="Update Oxytocin" onclick="UpdateOxytocin('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Medicine-->
+        <div class="row showInput p-2 b-1 mb-2 mt-5" style="margin-bottom : 40px !important">
+            <div class="col-md-6 p-1">
+                <label for="Medicine">Medicine</label>
+                <input id="Medicine" type="text" class="form-control" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Medicine">Time</label>
+                <select id="DrugsTimeDropdown" class="DrugsTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary btn-custom btn-md form-control" type="button" value="Update Drugs" onclick="UpdateDrugs('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Systolic & Diastolic-->
+        <div class="row showInput p-2 b-1 mb-2" style="margin-bottom : 80px !important; margin-top : 105px !important">
+            <div class="col-md-6 p-1">
+                <label for="systolic">Systolic</label>
+                <input type="number" class="form-control" min=60 max=180 id="Systolic" onblur="if(this.value > 180 || this.value <60) { this.value = ''; }" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="diastolic">Diastolic</label>
+                <input type="number" class="form-control" min=60 max=180 id="Diastolic" onblur="if(this.value > 180 || this.value <60) { this.value = ''; }" />
+            </div>
+
+            <div class="col-md-12 p-1">
+                <label for="time">Time</label>
+                <select id="BPTime" class="BPTime form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0 pb-2">
+                <input class="btn btn-primary btn-custom btn-md form-control mb-2" type="button" value="Update BP" onclick="UpdatePulseBP('@Model.PartographID')" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Pulse">Pulse</label>
+                <input type="number" class="form-control" id="Pulse" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Pulse">Time</label>
+                <select id="PulseTime" class="PulseTime form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary btn-md btn-custom form-control" type="button" value="Update Pulse" onclick="UpdatePulse('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Temp-->
+        <div class="row showInput p-2 b-1 mb-2" style="margin-bottom : 9px !important">
+            <div class="col-md-6 P-1">
+                <label for="Temperature">Temp °C</label>
+                <input type="text" name="Temperature" class="form-control" id="Temperature" />
+            </div>
+
+            <div class="col-md-6 P-1">
+                <label for="Temperature">Time</label>
+                <select id="TempTimeDropdown" class="TempTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 P-1 pt-0">
+                <input class="btn btn-primary btn-custom btn-md form-control" type="button" value="Update Temp" onclick="UpdateTemp('@Model.PartographID')" />
+            </div>
+        </div>
+
+        <!--Protein-->
+        <div class="row showInput p-2 b-1 mb-2">
+            <div class="col-md-6 p-1">
+                <label for="Protein">Protein</label>
+                <input type="text" id="Protein" class="form-control" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Protein">Time</label>
+                <select id="ProteinTimeDropdown" class="ProteinTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0 pb-2">
+                <input class="btn btn-primary btn-md btn-custom form-control mb-2" type="button" value="Update Protein" onclick="UpdateProtein('@Model.PartographID')" />
+            </div>
+
+            <!--Acetone-->
+            <div class="col-md-6 p-1">
+                <label for="Acetone">Acetone</label>
+                <input type="text" id="Acetone" class="form-control" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Protein">Time</label>
+                <select id="AcetoneTimeDropdown" class="AcetoneTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary btn-md btn-custom form-control mb-2" type="button" value="Update Molding" onclick="UpdateAcetone('@Model.PartographID')" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Acetone">Volume</label>
+                <input type="text" id="Volume" class="form-control" />
+            </div>
+
+            <div class="col-md-6 p-1">
+                <label for="Protein">Time</label>
+                <select id="VolumeTimeDropdown" class="VolumeTimeDropdown form-control">
+                    <option value="">Select</option>
+                </select>
+            </div>
+
+            <div class="col-md-12 p-1 pt-0">
+                <input class="btn btn-primary btn-custom btn-md form-control" type="button" value="Update Volume" onclick="UpdateVolume('@Model.PartographID')" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Delivery Information-->
+<form asp-action="Create" asp-controller="BirthDetails" method="post">
+    <div class="container mb-4 deliveryInfo" id="drop-down">
+        <div class="col-md-12">
+            @*<div class="card mx-auto mt-2">*@
+            <div class="card fw-bold border-0 text-dark shadow-sm" style="background-color:#f5f5f5;">
+                <span class="text-center mt-3" style="font-size:18px;">Delivery Information</span>
+                <!--Card-body START-->
+                <div class="card-body pe-5">
+                    <div class="row mt-2 form-group me-5 ms-5">
+                        <!--IsSuccessfulDelivery-->
+                        <div class="col-md-6">
+                            <label asp-for="IsSuccessfulDelivery" class="control-label me-3">Is successful delivery</label>
+                            <select name="IsSuccessfulDelivery" asp-items="Html.GetEnumSelectList(typeof (IsSuccessfulDelivery))" id="DeliveryInfo" onChange=showHide() class="col-md-4 dv" style="font-size:14px;">
+                                @*<option value="0" selected="selected">No</option>*@
+                                @*<option value="1">Yes</option>*@
+                            </select>
+                        </div> 
+                    </div>
+
+                    <div class="row mt-2 form-group me-5 ms-5">
+                        <div class="col-md-12 mt-1">
+                        <!--Remarks-->
+                            <label asp-for="Remarks" class="control-label col-md-2 mt-1">Remarks</label>
+                            <textarea asp-for="Remarks" name="Remarks" class="form-control text-box multi-line dv" rows="5" maxlength="500"></textarea>
+                        </div>
+                    </div>
+
+                    <div name="hidden-panel" id="hidden-panel">
+                        <hr class="mt-4 text-center ms-3" style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+                        <div class="row mt-3 me-5 ms-5 form-group offset-2">
+                            <!--Gender-->
+                            <div class="col-md-1 offset-1">
+                                <label asp-for="Gender" class="control-label mt-1">Gender</label>
+                            </div>
+                            <div class="col-md-2">
+                                <select asp-for="Gender" name="Gender" asp-items="Html.GetEnumSelectList(typeof (Sex))" class="form-select dv" style="font-size:14px;">
+                                    <option selected="selected" value="0">Select</option>
+                                </select>
+                            </div>
+
+                            <!--Weight-->
+                            <div class="col-md-1">
+                                <label asp-for="Weight" class="control-label mt-1">Weight </label>
+                            </div>
+                            <div class="col-md-2">
+                                <input asp-for="Weight" class="form-control text-box single-line mb-2 dv" maxlength="30" name="Weight" type="text">
+                            </div>
+
+                            <!--Type of Delivery-->
+                            <div class="col-md-2">
+                                <label asp-for="TypeOfDelivery" class="control-label mt-1">Type of Delivery</label>
+                            </div>
+                            <div class="col-md-2">
+                                <select name="TypeOfDelivery" asp-items="Html.GetEnumSelectList(typeof (TypeOfDelivery))" class="form-select dv" style="font-size:14px;">
+                                    <option selected="selected" value="0">Select</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!--Birth Date/Time:-->
+                        <div class="row mt-3 me-5 ms-5 form-group offset-2">
+
+                           <div class="col-md-2 offset-1">
+                                <label asp-for="BirthDate" class="mt-1">Birth date</label>
+                            </div>
+                            <div class="col-md-2" style="margin-left:-55px;">
+                                <input asp-for="BirthDate" value="" id="birthDate" class="form-control dv" type="text">
+                            </div>
+
+                             <div class="col-md-2 offset-1">
+                                <label asp-for="BirthTime" class="mt-1">Birth time</label>
+                            </div>
+                            <div class="col-md-2" style="margin-left:-55px;">
+                                <input asp-for="BirthTime" value="" id="birthTime" class="form-control dv" type="text">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--Button Start-->
+                    <div class="col-md-10 mt-3 ms-5">
+                        <div class="text-center ms-5">
+                            <button type="submit" class="btn btn-primary mt-3 customBtn mx-2" style="font-size:19px;">
+                                Complete
+                            </button>
+                        </div>
+                    </div>
+                    <!--Button End-->
+                </div>
+                <!--Card-body END-->
+            </div>
+        </div>
+    </div>
+</form>
+
+<!--Button Start-->
+<div class="col-md-10 mt-4 ms-3">
+    <div class="form-group fs-3">
+        <a href="/Partograph/Index" class="btn btn-sm-back mt-1 mx-2">
+            <span>Back</span>
+        </a>
+        @if (Model.PartographID != Guid.Empty)
+        {
+            <a asp-action="Details" asp-controller="Partograph" asp-route-partographId="@Model.PartographID" class="btn btn-sm-back mt-1">
+                <span>Print</span>
+            </a>
+        }
+    </div>
+</div>
+
+<div class="toast" data-animation="true" data-autohide="false">
+  <div class="toast-header">
+    <strong class="mr-auto">Bootstrap</strong>
+    <small>Error</small>
+    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="toast-body">
+    Hello, world! This is a toast message.
+  </div>
+</div>
+<!--Button End-->
+@*Moment Js*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js"></script>
+<script src="https://momentjs.com/downloads/moment-timezone-with-data.js"></script>
+
+@*Highcharts*@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+@*Custom Scripts*@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/sweetalert/sweetalert.min.js"></script>
+
+<script src="~/js/Partograph/PartographGlobal.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Cervix.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/FetalHeartRate.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/PulseBP.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/DrugsTable.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Liquor-Moduling.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Urine.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Oxytocin.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Contractions.js" asp-append-version="true"> </script>
+
+@section Scripts
+    {
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+    <script src="~/js/Partograph/CreatePage.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            partographId = '@Model.PartographID';
+        });
+
+         function onlyNumberKey(evt) {
+
+            // Only ASCII character in that range allowed
+            var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+            if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+                return false;
+            return true;
+        };
+
+    </script>
+
+    
+
+    }

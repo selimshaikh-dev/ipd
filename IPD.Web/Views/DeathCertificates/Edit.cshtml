@@ -1,0 +1,213 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model DeathCertificateDto
+
+@{
+    ViewBag.Title = "Death Certificate";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var patient = ViewBag.Patient as PatientDto ?? new PatientDto();
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<h1 class="text-center fw-bold mt-3" style="font-size:36px;">Death Certificate</h1>
+<h5 class="text-center" style="font-weight:600">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+
+    <form asp-action="Edit" asp-controller="DeathCertificates" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mt-3">
+            <!--Chief Complaint-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <!--Death certificate-->
+            <div class="col-md-6">
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Particular of death
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-4">
+                        <fieldset>
+                            <input type="hidden" asp-for="AdmissionID" value="@Model.AdmissionID" />
+                            <input type="hidden" asp-for="DeathCertificateID" value="@Model.DeathCertificateID" />
+
+                            <!--Name-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label for="Name">Name<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <input for="Name" type="text" class="form-control" value="@ViewBag.ClientName" disabled>
+                                <span for="Name" class="text-danger"></span>
+                            </div>
+
+                            <!--Age-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label>Age<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <input type="text" class="form-control" value="@DateTime.Now.GetYearsMonthsDaysText(patient.DOB)" disabled>
+                            </div>
+
+                            <!--PIN-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label>PIN<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <input type="text" class="form-control" value="@patient.NationalID" disabled>
+                            </div>
+
+                            <!--Date of Admission-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label for="AdmissionDate">Date of admission</label><br />
+                                <input for="AdmissionDate" type="text" class="form-control" value="@admission.AdmissionDate.ToString("MMM-dd-yyyy")" disabled>
+                            </div>
+
+                            <!--Next of Kin-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label>Next of Kin<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <input type="text" class="form-control" value="@admission.NextOfKin" disabled>
+                            </div>
+
+                            <!--Contact Number-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label>Contact number<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <input type="text" value="@patient.CellphoneCountryCode @patient.Cellphone" class="form-control" disabled>
+                            </div>
+
+                            <!--Chiefdom-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label for="ChiefdomName">Chiefdom</label><br />
+                                <input for="ChiefdomName" type="text" class="form-control" value="@ViewBag.ChiefdomName" disabled>
+                            </div>
+
+                            <!--Indvuna-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Indvuna">Indvuna<span class="text-danger" style="font-size: 14px;"> *</span></label><br />
+                                <input asp-for="Indvuna" type="text" class="form-control">
+                                <span asp-validation-for="Indvuna" class="text-danger"></span>
+                            </div>
+
+                            <!--Physical Address-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="PhysicalAddress">Physical address<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="PhysicalAddress" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="PhysicalAddress" class="text-danger"></span>
+                            </div>
+
+                            <!--Date of Death-->
+                            <div class="form-group mb-3 me-0 ms-0 row">
+                                <div class="col-6">
+                                    <label asp-for="DateOfDeath">Date of death<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="DateOfDeath" readonly="true" value="@Model.DateOfDeath.ToString("yyyy-MM-dd")" class="form-control input-White" type="text">
+                                    <span asp-validation-for="DateOfDeath" class="text-danger"></span>
+                                </div>
+                                <div class="col-6">
+                                    <label asp-for="TimeOfDeath">Time<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="TimeOfDeath" value="@Model.TimeOfDeath.ToString("HH:mm")" class="form-control" type="text">
+                                    <span asp-validation-for="TimeOfDeath" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--1-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <span>
+                                    Cause of Death i.e disease or condition directly leading to death.
+                                    (Indicate the cause of death according to International Classification of Diseases,
+                                    Injuries and Causes of Death - short version, Please see basic list of disease on backside)
+                                </span>
+                                <textarea asp-for="CauseOfDeath" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="CauseOfDeath" class="text-danger"></span>
+                            </div>
+
+                            <!--2-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <span>
+                                    Contributing/antecedent cause of illness i.e Morbid condition,
+                                    if any giving rise to the attendance in years months and days
+                                </span>
+                                <textarea asp-for="OtherReason" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="OtherReason" class="text-danger"></span>
+                            </div>
+
+                            <!--3-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <span>
+                                    Approximate interval between onset and death i.e duration of illness(not of attendance) in years months and days
+                                </span>
+                                <textarea asp-for="Interval" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="OtherReason" class="text-danger"></span>
+                            </div>
+
+                            <!--4-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <span>
+                                    Special investigation, Pathological Examin intention of Post Mortem etc. If performed
+                                </span>
+                                <textarea asp-for="SpecialInvistigation" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="SpecialInvistigation" class="text-danger"></span>
+                            </div>
+
+                            <!--Done under my hand on this-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="HandOn">Done under my hand on this</label><br />
+                                <input asp-for="HandOn" type="text" class="form-control">
+                                <span asp-validation-for="HandOn" class="text-danger"></span>
+                            </div>
+
+                            <!--Handed over to-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="HandOver">Handed over to</label>
+                                <input asp-for="HandOver" type="text" class="form-control">
+                                <span asp-validation-for="HandOver" class="text-danger"></span>
+                            </div>
+
+                            <!--Resident of-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Resident">Resident of<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <input asp-for="Resident" type="text" class="form-control">
+                                <span asp-validation-for="Resident" class="text-danger"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+                    <div class="col-12 text-center mb-3">
+                        <button type="submit" class="btn btn-primary btn-big mt-1 mx-2">Save</button>
+                        <a class="btn btn-big-back mx-2 mt-1" href="/Admissions/Index?patientId=@ViewBag.ClientId">Back</a>
+                    </div>
+                </div>
+            </div>
+            <!--Daily observation-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("DailyObservation")
+            </div>
+        </div>
+    </form>
+    <!--Body content End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('input#DateOfDeath').datetimepicker({
+            timepicker:false,
+            format:'Y-m-d'
+        });
+        $('input#TimeOfDeath').datetimepicker({
+            datepicker:false,
+            format:'H:i'
+        });
+    });
+</script>
+}

@@ -1,0 +1,53 @@
+﻿@using IPD.Web.Extensions
+@{
+    ViewBag.Title = "Referral";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<h1 class="text-center mt-2" style="font-size:36px;">Referral Information</h1>
+
+<!--Main container Start-->
+<div class="container body-content">
+    <br />
+
+    <div style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <div class="container" style="width:60%; margin-top:15px;">
+        <div class="row text-center g-3 p-2">
+            <!--International Referral-->
+            <div class="col-sm-12 col-md-6 ClCard">
+                <a href="@Url.ActionLink("Index", "InternationalReferral")">
+                    <div class="card w-100 box border-dark text">
+                        <div class="text-center pt-2">
+                            <img src="/images/img6.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3">
+                            <span class="fw-bold fs-6 text-dark">International /<br /> Local Referral</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!--Inter Department Referral-->
+            <div class="col-sm-12 col-md-6 ClCard">
+                <a href="@Url.ActionLink("Index", "InterReferrals")">
+                    <div class="card w-100 box border-dark text">
+                        <div class="text-center pt-2">
+                            <img src="/images/img6.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3">
+                            <span class="fw-bold fs-6 text-dark">Inter Department<br /> Referral</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Main container End-->

@@ -1,0 +1,70 @@
+﻿@using IPD.Domain.Dto
+@model AdmissionsDto
+@{
+    ViewBag.Title = "Admission";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    string? patientId = ViewBag.PatientId as string;
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Main container Start-->
+<div class="container mt-3">
+    <div class="col-md-10 offset-1 text-center">
+        <h1 class="mt-3" style="font-size:36px; font-weight:700;">Admissions</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 offset-md-1 mt-4">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = patientId })
+    </div>
+
+    <!--Body content Start-->
+    <div class="col-md-10 offset-md-1 mt-3">
+        <div class="card">
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h4>Record saved successfully.</h4>
+                </div>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td width="30%">Admission date</td>
+                            <td width="3%" align="center">:</td>
+                            <td width="67%">@Model.AdmissionDate.ToLongDateString() @Model.AdmissionTime.ToShortTimeString()</td>
+                        </tr>
+                        <tr>
+                            <td width="30%">Next of kin</td>
+                            <td width="3%" align="center">:</td>
+                            <td width="67%">@Model.NextOfKin</td>
+                        </tr>
+                        <tr>
+                            <td width="30%">Relationship</td>
+                            <td width="3%" align="center">:</td>
+                            <td width="67%">@Model.Relationship</td>
+                        </tr>
+                        <tr>
+                            <td width="30%">Contact address</td>
+                            <td width="3%" align="center">:</td>
+                            <td width="67%">@Model.ContactAddress</td>
+                        </tr>
+                        <tr>
+                            <td width="30%">Cellphone</td>
+                            <td width="3%" align="center">:</td>
+                            <td width="67%">@Model.CellphoneCountryCode @Model.Cellphone</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>
+                    <a class="btn btn-primary customBtn mt-3" href="@Url.ActionLink("Index", "Admissions", new { patientId = Model.PatientID})">Finish</a>
+                </p>
+            </div>
+        </div>
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->

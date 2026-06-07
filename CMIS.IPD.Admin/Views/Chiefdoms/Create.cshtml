@@ -1,0 +1,87 @@
+﻿@model IPD.Domain.Entities.Chiefdom
+
+@{
+    ViewData["Title"] = "Chiefdoms";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<div class="row m-4">
+    <!--Left Navigation-->
+    @Html.Partial("_LeftNavigation")
+
+    <div class="col-md-8 mt-2 mt-sm-3">
+        <h4>Chiefdoms </h4>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+
+        <div class="card mt-2">
+            <h6 class="card-header text-secondary">
+                Chiefdoms
+            </h6>
+            <form asp-action="Create" asp-controller="Chiefdoms" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="card-body mt-2">
+                    <div class="form-group row">
+                        <label asp-for="Name" class="col-sm-3 col-form-label text-end">Chiefdom name<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-sm-7">
+                            <input asp-for="Name" class="form-control" id="chiefdomName"/>
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <span id="userValidation"  class="text-danger">Chiefdom Name already exist!!</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group row mt-3">                        
+                        <label class="col-sm-3 col-form-label text-end">Tinkhundla Name<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-sm-7">
+                            <select asp-for="TinkhundlaID" class="form-control" asp-items="ViewBag.TinkhundlaID"></select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-2">
+                        <button type="submit" id="btnSave" class="btn btn-save m-2">Create</button>
+                        <a href="@Url.ActionLink("Index", "Chiefdoms")" type="button" class="btn btn-back m-2">Back</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    $(document).ready(function(){
+        $("#userValidation").hide();
+    })
+
+        $("#chiefdomName").on("keyup", function(){
+
+        var searchid = $(this).val().trim();
+        searchid.split(' ').join('')              
+    var url = `/Chiefdoms/GetAllChiefdoms`
+    $.ajax({
+        url: url,
+        cache: false,
+        success: function(data){
+            console.log(data);
+            $.each(data, function (i, item) {
+            if(item.name.trim().toUpperCase() === searchid.toUpperCase()){
+                $('#userValidation').show();
+                $("#btnSave").attr( "disabled", "disabled" ); 
+                    return false;
+            }else{
+                $("#btnSave").removeAttr("disabled");
+                $('#userValidation').hide();
+
+            }
+
+        });
+        }
+    });
+});
+</script>
+
+@{
+await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}

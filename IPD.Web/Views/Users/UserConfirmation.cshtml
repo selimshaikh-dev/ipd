@@ -1,0 +1,78 @@
+﻿<html>
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Success - CMIS</title>
+    <link rel="stylesheet" href="~/lib/bootswatch/cerulean/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <style>
+        body {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 14px;
+        line-height: 1.42857143;
+        color: #555;
+        background-color: #fff;
+    }
+
+    .footerColor {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #317eac;
+}
+
+    .navbar .navbar-nav .nav-link {
+        color: #ffffff;
+        font-size: 1em;
+    }
+    .navbar .navbar-nav .nav-link:hover {
+        background-color: #1E81CC;
+        color: #ffffff;
+    }
+
+    a.nav-link:hover {
+        background-color: #eee;
+    }
+
+</style>
+</head>
+
+<body>
+<div class="container body-content">
+<div style="text-align:center; margin-top:3px;">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<div class="row">
+    <div class="container mt-3" style="width:60%;">
+        <div class="card fs-5 fw-bold w-100 border-0 text-dark" style="background-color:#F2F4F5;">
+            <div class="card-body">
+                <label>@(Model.FirstName + " " + Model.MiddleName + " " + Model.LastName)</label><br />
+                <label>National ID: @Model.NationalID</label>
+            </div>
+        </div>
+   </div>
+</div>
+
+
+<div class="row">
+    <div class="container" style="width:60%; margin-top:90px;">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center"><b>Congratulations!</b></h1>
+                <h4 class="text-center">User profile registered successfully.</h4>
+
+                <p class="text-center">
+                <a class="btn btn-primary customBtn" asp-action="ProfileSearch" asp-controller="Clients" asp-route-message="@Model.FirstName">Finish</a>                 
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+</body>
+</html>

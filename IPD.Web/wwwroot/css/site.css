@@ -1,0 +1,105 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+* {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+body {
+    margin-bottom: 60px;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
+    color: #555;
+    background-color: #fff;
+}
+
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #02A7F0;
+}
+
+.footerColor {
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    line-height: 1.2;
+    color: #317eac;
+}
+
+.navbar .navbar-nav .nav-link {
+    color: #ffffff;
+    font-size: 1em;
+}
+.navbar .navbar-nav .nav-link:hover {
+    background-color: #1E81CC;
+    color: #ffffff;
+}
+
+.nav-link:hover {
+    /*background-color: #1E81CC;*/
+    color: #ffffff;
+}
+
+/*a .nav-link:hover {
+    background-color: #eee;
+}*/
+
+.navbar .navbar-nav > li > a, .navbar-brand {
+     text-shadow: 0 1px 0 rgb(0 0 0 / 10%); 
+}
+
+input.form-control.input-White {
+    background-color: #fff;
+}
+
+
+.scroll-auto{
+    max-width: 950px;
+    min-height: 2250px;
+    overflow-x:auto;
+    overflow-x:auto;
+}
+
+.colored-toast.swal2-icon-success {
+    background-color: #a5dc86 !important;
+}
+
+.colored-toast.swal2-icon-error {
+    background-color: #f27474 !important;
+}
+
+.colored-toast.swal2-icon-warning {
+    background-color: #f8bb86 !important;
+}
+
+.colored-toast.swal2-icon-info {
+    background-color: #3fc3ee !important;
+}
+
+.colored-toast.swal2-icon-question {
+    background-color: #87adbd !important;
+}
+
+.colored-toast .swal2-title {
+    color: white;
+}
+
+.colored-toast .swal2-close {
+    color: white;
+}
+
+.colored-toast .swal2-html-container {
+    color: white;
+}

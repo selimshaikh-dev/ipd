@@ -1,0 +1,52 @@
+﻿@using IPD.Domain.Dto;
+@using IPD.Web.Extensions;
+@using static IPD.Domain.Constants.Enumerators
+@model dynamic
+@{
+    var client = Model.Client as ClientsInfoDto ?? new ClientsInfoDto();
+    var admission = Model.Admission as AdmissionsDto ?? new AdmissionsDto();
+}
+
+<div class="card patientCard w-100 border-0 text-dark shadow-sm" style="background-color:#f5f5f5;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-10">
+                <h5 class="patientName">@client.FirstName @client.MiddleName @client.LastName</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-10 patientInfo">
+                @{
+                    var sexSelectedItems = Html.GetEnumSelectList(typeof(Sex));
+                    var sexItem = sexSelectedItems.FirstOrDefault(x => x.Value == client.Sex.ToString());
+                    string sexText = sexItem?.Text ?? string.Empty;
+
+                    string ageText = $"({DateTime.Now.GetYearsMonthsDaysText(client.DOB)})".Trim();
+                    if (ageText == "()")
+                    {
+                        ageText = string.Empty;
+                    }
+                }
+
+                <label class="fw-bold lbl">UHID:</label>
+                @client.UHID
+
+                <label class="fw-bold lbl ps-3">Sex:</label>
+                @sexText
+
+                <label class="fw-bold lbl ps-3">Date of birth:</label>
+                @client.DOB.ToString("dd-MM-yyyy") @ageText
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-10 patientInfo">
+                <label class="fw-bold lbl">Admission Date:</label>
+                @admission.AdmissionDate.ToString("dd-MM-yyyy")
+
+                <label class="fw-bold lbl ps-3">Doctor:</label>
+                @admission.AssaignDoctor
+            </div>
+        </div>
+    </div>
+</div>

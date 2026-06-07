@@ -1,0 +1,63 @@
+﻿@using IPD.Domain.Dto
+@model TreatmentPlanDto
+@{
+    ViewData["Title"] = "Diagnosis";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Logo-->
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container mt-3">
+    <div class="col-md-10 offset-1">
+        <h1 class="text-center mt-3" style="font-size:36px; font-weight:700;">Treatment Plan</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 offset-md-1 mt-3">
+        @await Component.InvokeAsync("ClientClinicInfo")
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!--Chief complaint-->
+        <div class="col-md-3 offset-md-1 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+        <div class="col-md-7">
+            @*<div class="responsive_div">*@
+            <div class="card mx-auto mt-2">
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h4>Record saved successfully.</h4>
+                    </div>
+
+                    <table class="table table-condensed table-responsive">
+                        <tbody class="mb-3">
+                            <tr>
+                                <td width="30%">  Treatment/Management plan</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%" align="left">@Model.TreatementPlanDetails</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="text-center mb-2">
+                        <a class="btn btn-primary btn-big mt-3" href="/TreatmentPlan/Index">Finish</a>
+                    </p>
+                </div>
+            </div>
+            @*</div>*@
+        </div>
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->

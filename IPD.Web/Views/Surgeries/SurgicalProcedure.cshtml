@@ -1,0 +1,66 @@
+﻿@using Microsoft.Build.Construction
+@{
+    ViewData["Title"] = "Console";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+<br />
+<h1 class="text-center text-capitalize" style="font-size:36px;">Surgery</h1>
+
+<!--Main container Start-->
+<div class="container body-content mb-5">
+    <div style="text-align:center; margin-top:3px;"> </div>
+    <br />
+
+    <!--Main List-->
+    <div class="mt-2" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Card-->
+    <div class="container" style="width:60%; margin-top:30px;">
+        <div class="row text-center g-3 p-2">
+            <!--Surgical-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card w-100 box border-dark text">
+                    <div class="text-center pt-2">
+                        <a href="@Url.ActionLink("Index", "Surgeries")">
+                            <img src="/images/surgery.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-2" />
+                        </a>
+                        <span href="/Surgeries/Index" class="fw-bold fs-6 text-dark">Surgeries</span>
+                    </div>
+                </div>
+            </div>
+
+            <!--Post Surgical-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card w-100 box border-dark text">
+                    <div class="text-center pt-2">
+                        <a href="/PostSurgeries/Index">
+                            <img src="/images/post-surgery.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-2" />
+                        </a>
+                        <span href="/PostSurgeries/Index" class="fw-bold fs-6 text-dark">Post Surgeries</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Main container End-->
+
+<style>
+    .box {
+        border-radius: 4px;
+        background: #fff;
+        
+        cursor: pointer;
+        height: 12rem;
+    }
+</style>

@@ -1,0 +1,128 @@
+﻿@using IPD.Domain.Dto
+@model DoctorNotesDto
+
+@{
+    ViewBag.Title = "Doctor's Note";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<h1 class="text-center text-capitalize mt-3" style="font-size:36px;">Daily Doctor's Note</h1>
+<h5 class="text-center">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Form Start-->
+    <form asp-controller="DoctorsNote" asp-action="Create" method="post" name="DoctorsNoteForm"  onsubmit="return validateForm()">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mt-3">
+            <!--Chief Complaint-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <!--Doctors note-->
+            <div class="col-md-6">
+                @*<div class="responsive_div"> *@
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Daily doctor's note
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-3">
+                        <fieldset>
+                            <!--Date Of Note-->
+                            <div class="form-group mb-3 me-0 ms-0 row">
+                                <div class="col-6">
+                                    <label asp-for="DateOfNote">Date<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                    <input asp-for="DateOfNote" readonly="true" value="" data-val-required="The date of note is required." class="form-control input-White" type="text">
+                                    <span asp-validation-for="DateOfNote" class="text-danger"></span>
+                                </div>
+                                <div class="col-6">
+                                    <label asp-for="TimeOfNote">Time<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                    <input asp-for="TimeOfNote" value="" data-val-required="The time of note is required." class="form-control" type="text">
+                                    <span asp-validation-for="TimeOfNote" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--Observation-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Observation">Observation<span class="text-danger" style="font-size: 15px;"> *</span></label>
+                                <textarea asp-for="Observation" id="Observation" required value="@Model.Observation" class="form-control text-box multi-line" rows="3"></textarea>
+                                <span asp-validation-for="Observation" id="Observationerror" class="text-danger"></span>
+                            </div>
+
+                            <!--Request for Test/Radiology-->
+                            <div class="form-group mb-2 me-2 ms-2">
+                                <label asp-for="TestRequest">Request for test/radiology</label>
+                                <textarea asp-for="TestRequest" value="@Model.TestRequest" class="form-control text-box multi-line" rows="3"></textarea>
+                                @* <span asp-validation-for="TestRequest" class="text-danger"></span>*@
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+
+                    <div class="col-12 text-center mb-3">
+                        <button class="btn btn-primary btn-big mt-1 mx-2" type="submit" role="button"><span> Save</span></button>
+                        <a class="btn btn-big-back mt-1 mx-2" href="/DoctorsNote/Index"><span> Back</span></a>
+                    </div>
+
+                </div>
+                @*</div> *@
+            </div>
+
+            <!--Daily observation-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("DailyObservation")
+            </div>
+        </div>
+    </form>
+    <!--Form End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('input#DateOfNote').datetimepicker({
+                timepicker:false,
+                format:'Y-m-d',
+                maxDate:0,
+                minDate: 0
+            });
+            $('input#TimeOfNote').datetimepicker({
+                datepicker:false,
+                format:'H:i'
+            });
+        });
+
+    </script>
+}
+<script>
+   
+        function validateForm() {
+          let a = document.forms["DoctorsNoteForm"]["Observation"].value;
+         
+            if (a == "") {
+                document.getElementById("Observationerror").innerHTML = "The Observation is required!";
+                return false;
+            } else {
+                document.getElementById("Observationerror").innerHTML = " ";
+            }
+        }
+</script>
+

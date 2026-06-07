@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "Discharge Note";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+@model DischargeNoteViewModels;
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<h1 class="text-center mt-3 fw-bold" style="font-size:36px;">Client Discharge</h1>
+<h5 class="text-center" style="font-weight:600">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <!--Navabr button-->
+    <nav class="navbar navbar-light mt-3">
+        <form class="container-fluid justify-content-start">
+            <a href="@Url.ActionLink("Create", "Discharge")" class="btn btn-primary btn-search my-4 me-4 " role="button">Discharge Note</a>
+            <a href="@Url.Action("Create", "DeathCertificates")" class="btn btn-outline-secondary my-4 me-4  btn-search" role="button">Death Certificate</a>
+        </form>
+    </nav>
+
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <form asp-controller="Discharge" asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mt-3">
+            <!--Chief Complaint-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <!--Discharge Note-->
+            <div class="col-md-6">
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Discharge Note
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-4">
+                        <fieldset>
+                            <!--Discharge date-->
+                            <div class="form-group mb-3 me-0 ms-0 row">
+                                <div class="col-6">
+                                    <label asp-for="Create.DischargeDate">Discharge date<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Create.DischargeDate" readonly="true" value="" data-val-required="The Discharge date is required." class="form-control input-White" type="text">
+                                    <span asp-validation-for="Create.DischargeDate" class="text-danger"></span>
+                                </div>
+
+                                <div class="col-6">
+                                    <label asp-for="Create.DischargeTime">Time<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <input asp-for="Create.DischargeTime" value="" data-val-required="The Discharge time is required." class="form-control" type="text">                                        <span asp-validation-for="Create.DischargeTime" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!--Discharge status-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Create.DischargeStatusID">Discharge status<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                @{
+                                    var selectItems = Model?.DischargeStatuses
+                                    .Select(item => new SelectListItem
+                                    {
+                                        Value = item.DischargeStatusID.ToString(),
+                                        Text = item.DischargesStatus,
+                                        Selected = item.DischargeStatusID == Model.Create.DischargeStatusID
+                                    }).ToList();
+                                }
+                                <select asp-for="Create.DischargeStatusID" asp-items="@selectItems" class="form-select">
+                                    <option value="">Select</option>
+                                </select>
+                                <span asp-validation-for="Create.DischargeStatusID" class="text-danger"></span>
+                            </div>
+
+                            <!--Advice for the Client-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Create.Advice">Advice for the client<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="Create.Advice" class="form-control text-box multi-line" rows="3"></textarea>
+                                <span asp-validation-for="Create.Advice" class="text-danger"></span>
+                            </div>
+
+                            <!--Diet and Nutrition Advice-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Create.DietNutritionAdvice">Diet and nutrition advice<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="Create.DietNutritionAdvice" data-val-required="The Diet and nutrition advice is required." class="form-control text-box multi-line" rows="3"></textarea>
+                                <span asp-validation-for="Create.DietNutritionAdvice" class="text-danger"></span>
+                            </div>
+
+                            <!--Medication Advice-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Create.MedicationAdvice">Medication advice<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="Create.MedicationAdvice" data-val-required="The Medication advice is required." class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="Create.MedicationAdvice" class="text-danger"></span>
+                            </div>
+
+                            <!--Final diagnosis-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="Create.FinalDiagnosis">Final diagnosis<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="Create.FinalDiagnosis" data-val-required="The Final diagnosis is required." class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="Create.FinalDiagnosis" class="text-danger"></span>
+                            </div>
+
+                            <!--Remark-->
+                            <div class="form-group mb-2 me-2 ms-2">
+                                <label asp-for="Create.Remarks">Remarks<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="Create.Remarks" data-val-required="The Remarks is required." class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="Create.Remarks" class="text-danger"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+                    <div class="col-12 text-center mb-3">
+                        <button type="submit" class="btn btn-primary btn-big mt-1 mx-2 "> Save</button>
+                        <a class="btn btn-big-back mt-1 mx-2" href="/Admissions/Index?patientId=@ViewBag.ClientId"><span> Back</span></a>
+                    </div>
+                </div>
+            </div>
+            <!--Daily observation-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("DailyObservation")
+            </div>
+        </div>
+    </form>
+    <!--Body content End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('input#Create_DischargeDate').datetimepicker({
+            timepicker:false,
+            format:'Y-m-d',
+            minDate: new Date(1900,1-1,1),
+            minDate:0,
+            maxDate: 0
+        });
+        $('input#Create_DischargeTime').datetimepicker({
+            datepicker:false,
+            format:'H:i'
+        });
+    });
+</script>
+}

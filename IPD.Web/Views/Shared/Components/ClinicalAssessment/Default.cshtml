@@ -1,0 +1,205 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+
+@{
+    var chiefComplain = ViewBag.LatestChiefComplain as List<ChiefComplaintsDto> ?? new List<ChiefComplaintsDto>();
+    var patientDiagnosis = ViewBag.LatestPatientDiaDiagnosis as List<PatientDiagnosisDto> ?? new List<PatientDiagnosisDto>();
+    var Examination = ViewBag.LatestExamination as List<PatientExaminationsDto>;
+    var patientExaminations = ViewBag.DiagonosisExamimations as List<DiagonosisExaminationDto> ?? new List<DiagonosisExaminationDto>();
+    var treatmentPlans = ViewBag.LatestTreatmentPlans as List<TreatmentPlanDto> ?? new List<TreatmentPlanDto>();
+    var medicationPlans = ViewBag.LatestMedicationPlan as List<IPD.Domain.Dto.PrescriptionGetDto> ?? new List<IPD.Domain.Dto.PrescriptionGetDto>();
+
+
+
+
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+    var ncds = ViewBag.Ncds as List<NcdDto> ?? new List<NcdDto>();
+    var allergies = ViewBag.Allergies as List<AllergiesDto> ?? new List<AllergiesDto>();
+    var diagnosisCodes = ViewBag.DiagnosisCode as List<ICDDigonosisCodeDto> ?? new List<ICDDigonosisCodeDto>();
+}
+
+<!--Chief Complaint-->
+<div class="card CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Chief Complaint</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">
+        <p class="card-text" style="font-size: 10px;">
+            @{
+                @if (chiefComplain.Any())
+                {
+                    @foreach (var item in chiefComplain.Take(1))
+                    {
+                        var hypertentionSelectedItems = Html.GetEnumSelectList(typeof(Hypertention));
+                        var hypertentionItem = hypertentionSelectedItems.FirstOrDefault(x => x.Value == item?.Hypertention.ToString());
+                        string hypertentionText = hypertentionItem?.Text ?? string.Empty;
+
+                        var epilepsySelectedItems = Html.GetEnumSelectList(typeof(Epilepsy));
+                        var epilepsyItem = epilepsySelectedItems.FirstOrDefault(x => x.Value == item?.Diabetes.ToString());
+                        string epilepsyText = epilepsyItem?.Text ?? string.Empty;
+
+                        var diabetesSelectedItems = Html.GetEnumSelectList(typeof(Diabetes));
+                        var diabetesItem = diabetesSelectedItems.FirstOrDefault(x => x.Value == item?.Epilepsy.ToString());
+                        string diabetesText = diabetesItem?.Text ?? string.Empty;
+                        <text>
+                            <b style="font-size:14px;">@item.FacilityName</b><br />
+                            <b style="font-size:12px;">  @item?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b><br />
+                            <span style="font-size:12px;"> @item?.ComplaintName</span><br />                                  
+                        </text>
+                        <br />
+                    }
+                }
+            }
+        </p>
+        @if (chiefComplain.Count>0)
+        {
+            <div class="viewlink">
+                <a href="@Url.ActionLink("Index", "ChiefComplaints")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+            </div>
+        }
+    </div>
+</div>
+
+<!--Patients Examination-->
+<div class="card mt-3 CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Patient Examination</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">
+        @if (Examination != null)
+        {
+            foreach (var item in Examination.Take(1))
+            {
+            <p class="card-text" style="font-size: 10px;">
+                <b style="font-size:14px;">@item.FacilityName</b><br />
+                <b style="font-size:12px;">  @item?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b><br />
+                <span>@string.Join(", ",item.ExaminationDetails.Select(i=> i.DigonosisExaminationName))</span> 
+                <br />
+                <span>Findings:</span> @item?.Findings
+            </p>
+            }
+        }
+        @if (Examination.Count>0)
+        {
+        <div class="viewlink">
+            <a href="@Url.ActionLink("Index", "PatientExaminations")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+        </div>
+        }
+    </div>
+</div>
+
+<!---Diagnosis-->
+<div class="card mt-3 CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Diagnosis(ICD-11)</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">
+
+        @if (patientDiagnosis.Any())
+        {
+            foreach (var item in patientDiagnosis.Take(1))
+            {
+            <p class="card-text" style="font-size: 10px;">
+                <b style="font-size:14px;">@item.FacilityName</b>
+                <br />
+                <b style="font-size:13px;"> @item?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b>
+                <br />
+
+                    @{
+                        var diagnosisIds = item.DiagonosisDetails.Select(x => x.DiseaseID).ToList();
+                        var diagnosisDetails = diagnosisCodes
+                        .Where(x => diagnosisIds.Contains(x.DiseaseID))
+                        .ToList();
+                    }
+                    @foreach (var diagnosisCode in diagnosisDetails)
+                    {
+                    <span> @string.Join(", ",@diagnosisCode?.ICDCode, @diagnosisCode?.Description)</span>
+                    }
+                <br />                  
+            </p>
+            }
+        }
+
+        @if (patientDiagnosis.Count>0)
+        {
+            <div class="viewlink">
+                <a href="@Url.ActionLink("Index", "Diagnosis")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+            </div>
+        }
+    </div>
+</div>
+
+<!--Treatment Plan-->
+<div class="card mt-3 CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Treatment Plan</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">    
+        @{
+            @if (treatmentPlans != null)
+            {
+                foreach (var item in treatmentPlans.Take(1))
+                {
+                <p class="card-text" style="font-size: 10px;">
+                    <b style="font-size:14px;">@item.FacilityName</b>
+                    <br />
+                    <b style="font-size:12px;">  @item?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b>
+                    <br />
+                    <span>Treatment Plan Details:</span> @item?.TreatementPlanDetails
+                </p>
+                }
+            }
+        }
+
+        @if (treatmentPlans.Count > 0)
+        {
+        <div class="viewlink">
+            <a href="@Url.ActionLink("Index", "TreatmentPlan")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+        </div>
+        }
+    </div>
+</div>
+
+<!--Medication Plan-->
+<div class="card mt-3 CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Medication Plan</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">
+        @if (medicationPlans.Any())
+        {
+            foreach (var medicationPlan in medicationPlans.Take(1))
+            {
+            <p class="card-text" style="font-size: 10px;">
+                <b style="font-size:14px;">@medicationPlan.FacilityName</b>
+                <br />
+                <b style="font-size:12px;">  @medicationPlan?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b>
+                <br />
+                
+                @foreach (var i in medicationPlan.MedicationPlanDtos)
+                {
+                   <b style="font-size:12px;"> @i.MedicationName</b><br />
+                }           
+              
+            </p>
+            }
+        }
+
+        @if (medicationPlans.Count>0)
+        {
+            <div class="viewlink">
+                <a href="@Url.ActionLink("Index", "MedicationPlan")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        var maxLength = 190;
+        $(".show-read-more").each(function() {
+            var myStr = $(this).html();
+            if ($.trim(myStr).length > maxLength) {
+                var newStr = myStr.substring(0, maxLength);
+                console.log(newStr);
+                $(this).empty().html(newStr);
+                $(this).append('.....');
+            }
+        });
+    });
+</script>
+
+
+
+

@@ -1,0 +1,106 @@
+﻿@{
+    ViewData["Title"] = "Console";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Main container Start-->
+<div class="container body-content">
+<div style="text-align:center; margin-top:3px;"> </div>
+<br /> 
+
+<div class="container body-content">
+    <div class="container" style="width:60%; margin-top:30px;">
+        <div class="row text-center g-3 p-2">
+            <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 w-100">
+                 <!--Search client-->
+                <a href="/Clients/ProfileSearch"></a>
+                <div class="text-center pt-3">
+                <a href="/Clients/ProfileSearch">
+                <h1><span class="bi bi-search"></span></h1>
+                </a><a href="/Clients/ProfileSearch" style="font-weight:bold; text-decoration:none; color:#2fa4e7;">Search Client</a>
+                <br><br>
+            </div>
+            </div>
+            </div>
+
+            <!--Search Token-->
+            <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 w-100">
+                    <a href="/OutPatient/TokenSearch"></a>
+                    <div class="text-center pt-3"><a href="/OutPatient/TokenSearch">
+                    <h1><span class="bi bi-tags"></span></h1>
+                    </a><a href="/OutPatient/TokenSearch" style="font-weight:bold;text-decoration:none; color:#2fa4e7;">Search Token</a>
+                    <br><br>
+                </div>
+            </div>
+            </div>
+
+            <!--Change password-->
+            <div class="col-12 col-md-6 col-lg-4">
+            <div class="card h-100 w-100">
+                <a href="/Users/ChangePassword"></a>
+                <div class=" text-center pt-3"><a href="/Users/ChangePassword">
+                <h1><span class="bi bi-pencil-square"></span></h1>
+                </a><a href="/Users/ChangePassword" style="font-weight:bold; text-decoration:none; color:#2fa4e7;">Change Password</a>
+                <br><br>
+            </div> 
+            </div>
+            </div>      
+
+            <!--Reports-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 w-100">
+                <a href="/Reports"></a>
+                <div class="text-center pt-3"><a href="/Reports">
+                    <h1><span class="bi bi-clipboard-data"></span></h1>
+                    </a><a href="/Reports" style="font-weight:bold; text-decoration:none; color:#2fa4e7;">Reports</a>
+                    <br><br>
+                </div>
+                </div>
+            </div>
+
+            <!--Edit profile-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 w-100">
+                <a href="/Users/Edit"></a>
+                <div class="text-center pt-3"><a href="/Users/Edit">
+                    <h1><span class="bi bi-person-workspace"></span></h1>
+                    </a><a href="/Users/Edit" style="font-weight:bold; text-decoration:none;color:#2fa4e7;">Edit Profile</a>
+                    <br><br>
+                </div>
+                </div>
+            </div>
+
+            <!--Logout-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card h-100 w-100">
+                <a href="/"></a>
+                <div class="text-center pt-3"><a href="/">
+                    <h1><span class="bi bi-box-arrow-right"></span></h1>
+                    </a><a href="/" style="font-weight:bold;text-decoration:none; color:#2fa4e7;">Logout</a>
+                    <br><br>
+                </div> 
+                </div>
+            </div>      
+        </div>
+    </div>
+</div>
+<!--Main container End-->
+</div>
+
+<style>
+  .card {
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+    transition: .3s transform cubic-bezier(.155,1.105,.295,1.12),.3s box-shadow,.3s -webkit-transform cubic-bezier(.155,1.105,.295,1.12);
+    cursor: pointer;
+}
+
+.card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+</style>
+<br /><br />

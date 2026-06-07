@@ -1,0 +1,99 @@
+﻿@using IPD.Domain.Dto
+@model PatientGetDto
+@{
+    ViewData["Title"] = "ClientConfirmation";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<div class="container">
+    <div style="text-align:center; margin-top:3px;">
+        <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+    </div>
+
+    <div class="row">
+        <div class="col-md-10 mt-3 offset-1">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center"><b>Congratulations!</b></h1>
+                <h4 class="text-center">Client profile updated successfully.</h4>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body pe-4 mb-1">
+                <div class="form-horizontal form-group">
+                    <div class="col-md-12 me-1 ms-1">
+                        <div class="customdiv" style="margin-left: 12px;">
+                            <div class="d-flex justify-content-between ms-1 me-3">
+                                <div class="fs-5 fw-bold" style="color:#317eac;">
+                                    @* ${i.firstName} ${middle} ${i.lastName}*@
+                                    @Model.FirstName @Model.MiddleName @Model.LastName
+                                </div>
+                                 <div style="color:#317eac;">Profile registered: @Model.DateCreated.ToString("dd-MM-yyyy")</div>
+                            </div>
+
+                            <div class="fs-6 me-2 ms-1" style="font-weight:400; color:#317eac;">
+                                    UHID: @Model.UHID
+                            </div>
+                        </div>
+
+                        <div class="table-responsive py-2 me-3 ms-3">
+                            <table class="table table-bordered table-responsive">
+                                <tbody>
+                                    <tr>
+                                      <th scope="row">PIN</th>
+                                       <td>@Model.NationalID</td>
+                                      <td style="font-weight:bold;">Date of Birth</td>
+                                      <td>@Model.DOB.ToString("dd-MM-yyyy")</td>
+                                      <td style="font-weight:bold;"> Sex</td>
+                                      <td> @Model.SexName</td>
+                                    </tr>
+
+                                    <tr>
+                                      <th scope="row">Cellphone</th>
+                                      <td>@Model.Cellphone</td>
+                                      <th scope="row">Land phone</th>
+                                      <td>@Model.LandPhone</td>
+                                      <td style="font-weight:bold;">Email</td>
+                                      <td>@Model.Email</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="font-weight:bold;">Country of origin</td>
+                                         @* <td>${i.countries.name}</td>*@
+                                          <td>@Model.CountryName</td>
+                                        <td style="font-weight:bold;">Inkhundla</td>
+                                        <td>@Model.TinKhundlaName </td>
+                                        <td style="font-weight:bold;">Chiefdom</td>
+                                        <td>@Model.ChiefdomName </td>
+                                    </tr>
+                                    <tr>
+                                      <th scope="row">Marital Status</th>
+                                       <td>@Model.MaritalStatusName</td>
+                                      <td style="font-weight:bold;">Residential address</td>
+                                      <td>@Model.ContactAddress</td>
+                                      <th style="font-weight:bold;">Postal address</th>
+                                      <td>@Model.PostalAddress </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="mx-auto col-md-10">
+                            <div class="text-center">
+                                <a href="/Clients/Edit?patientId=@Model.PatientID" class="btn btn-primary btn-block btn-search mx-2 my-1" style="font-size:18px;">
+                                    Edit Profile
+                                </a>
+                                <a href="/Admissions?patientId=@Model.PatientID" class="btn btn-primary btn-block btn-search mx-2 my-1" style="font-size:18px;">
+                                    Select
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</div>
+

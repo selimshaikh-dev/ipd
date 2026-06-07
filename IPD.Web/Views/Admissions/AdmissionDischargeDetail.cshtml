@@ -1,0 +1,245 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model AdmissionsDto
+@{
+    ViewBag.Title = "Admission Details";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    string? patientId = ViewBag.PatientId as string;
+    var dischargeStatuses = ViewBag.DischargeStatuses as List<DischargeStatusDto> ?? new List<DischargeStatusDto>();
+    var patient = ViewBag.Patient as PatientDto ?? new PatientDto();
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Main container Start-->
+<div class="container mt-3">
+    <div class="col-md-10 offset-1 text-center">
+        <h1 class="mt-3 fw-bold" style="font-size:36px;">Admissions Details</h1>
+        <hr class="mt-4" style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 mt-3 offset-1">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = patientId })
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!--Admission -->
+        <div class="col-md-5 offset-1">
+            <div class="card mt-3" style="border-color:#17202A">
+                <div class="card-header" style="font-size:30px;">Admission</div>
+                <div class="card-body">
+                    <table class="table table-condensed table-responsive">
+                        <tbody>
+                            <tr>
+                                <td width="30%">Admission date</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.AdmissionDate.ToLongDateString() @Model.AdmissionTime.ToShortTimeString()</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Next of kin</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.NextOfKin</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Contact address</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.ContactAddress</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Cellphone</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.CellphoneCountryCode @Model.Cellphone</td>
+                            </tr>
+                            <tr>
+                                <td width="30%">Is discharged</td>
+                                <td width="3%" align="center">:</td>
+                                <td width="67%">@Model.IsDischarged</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        @{
+            if (Model.Discharges != null && Model.Discharges.Any())
+            {
+                var discharge = Model.Discharges.FirstOrDefault();
+                if (discharge != null)
+                {
+                    <!-- Discharge -->
+                    <div class="col-md-5">
+                        <div class="card ms-2 mt-3" style="border-color:#17202A">
+                        <div class="card-header" style="font-size:30px;">Discharge</div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td width="30%">Discharge date</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@discharge.DischargeDate.ToLongDateString() @discharge.DischargeTime.ToShortTimeString()</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Discharge Status</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">
+                                                @{
+                                                    var status = dischargeStatuses.FirstOrDefault(x => x.DischargeStatusID == discharge.DischargeStatusID);
+                                                }
+                                                @status?.DischargesStatus
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Advice for the client</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@discharge.Advice</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Diet and nutrition advice</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@discharge.DietNutritionAdvice</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Medication advice</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@discharge.MedicationAdvice</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Final diagnosis</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@discharge.FinalDiagnosis</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Remarks</td>
+                                            <td width="3%" align="center">:</td>
+                                            <td width="67%">@discharge.Remarks</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+
+        @{
+            if (Model.DeathCertificates != null && Model.DeathCertificates.Any())
+            {
+                var deathCertificate = Model.DeathCertificates.FirstOrDefault();
+                if (deathCertificate != null)
+                {
+                    <!-- DeathCertificates -->
+                    <div class="col-md-5">
+                        <div class="card ms-2 mt-3" style="border-color:#17202A">
+                        <div class="card-header" style="font-size:30px;">Death crtificate</div>
+                            <div class="card-body">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td width="30%">Patient name</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@ViewBag.ClientName</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Patient age</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@DateTime.Now.GetYearsMonthsDaysText(patient.DOB)</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Patient PIN</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@patient.NationalID</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Date of admission</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@admission.AdmissionDate.ToString("MMM-dd-yyyy")</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Next of kin</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@admission.NextOfKin</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Contact number</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@patient.CellphoneCountryCode @patient.Cellphone</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Chiefdom name</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@ViewBag.ChiefdomName</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Indvuna</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.Indvuna</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Physical address</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.PhysicalAddress</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Date of death</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.DateOfDeath.ToString("MMM-dd-yyyy") @deathCertificate.TimeOfDeath.ToShortTimeString()</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Cause of death</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.CauseOfDeath</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Contributing/antecendent cause or illness</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.OtherReason</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Approximate interval between onset and death</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.Interval</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Special invistigation, Pathological examin intention of post nortem etc</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.SpecialInvistigation</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Done under my hand on this</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.HandOn</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Handed over to</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.HandOver</td>
+                                        </tr>
+                                        <tr>
+                                            <td width="30%">Resident of</td>
+                                            <td width="3%">:</td>
+                                            <td width="67%">@deathCertificate.Resident</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        <div class="col-md-10 offset-1">
+            <p class="mt-3">
+                <a class="btn btn-sm-back mt-3" href="@Url.ActionLink("Index", "Admissions", new { patientId = Model.PatientID})">Back</a>
+            </p>
+        </div>
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->

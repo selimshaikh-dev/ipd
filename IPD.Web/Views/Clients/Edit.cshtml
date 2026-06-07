@@ -1,0 +1,284 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+@model PatientDto
+@{
+    ViewData["Title"] = "ClientRegistration";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var drpMarital = ViewBag.maritalStatus;
+    var drpcountry = ViewBag.country;
+    var drpInkhundla = ViewBag.inkhundla as List<Tinkhundla> ?? new List<Tinkhundla>();
+    var drpChiefdom = ViewBag.chiefdom as List<Chiefdom> ?? new List<Chiefdom>();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+<br />
+<h1 class="text-center text-capitalize" style="font-size:34px;">Edit Client's Profile</h1>
+<h5 class="text-center">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<div class="container">
+    <form asp-action="Edit" name="ClientsEditForm" asp-controller="Clients" method="post" onsubmit="return validateForm()">
+        <!--Client identification-->
+        <div class="card mx-auto mt-3 col-md-10 offset-md-3">
+            <div class="card-header text-secondary">
+                Client identification
+            </div>
+            <!--Card-body START-->
+            <div class="card-body pe-5">
+                <div class="form-horizontal form-group row">
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="pb-3">
+                                <input checked="checked" id="optPIN" name="SearchOption" type="radio" value="PIN"> PIN&nbsp;
+                                <input id="optCode9" name="SearchOption" type="radio" value="Code9"> Code9&nbsp;
+                                <input id="optCode1" name="SearchOption" type="radio" value="Code1"> Code1
+                                <input type="hidden" asp-for="UHID">
+                                <input type="hidden" asp-for="PatientID">
+                                <input type="hidden" asp-for="baseUrl" id="baseurlstring">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 mt-1">
+                                <input asp-for="NationalID" class="form-control text-box single-line"
+                                       data-val-length-max="13" data-val-required="PIN is required!" id="txtIdentifire" maxlength="13"
+                                       placeholder="Type client's PIN and click Find..." style="max-width:600px; height: 39px;" type="text" title="The field PIN must be a number with a maximum length of 13." onkeypress="return onlyNumberKey(event)">
+                                <span asp-validation-for="NationalID" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-4 mt-1">
+                                <button type="button" name="NationalID" id="btnSearch" value="Search" class="btn btn-primary customBtn">
+                                    Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5" style="padding-top:5px; font-size:13px;">
+                        Use <b>Personal Identification Number (PIN)</b> to search client's details.
+                        <br>
+                        Use <b>Code 9</b> for Swazi citizen who does not have the Swazi PIN.
+                        <br>
+                        Use <b>Code 1</b> for foreign citizen who does not have the Swazi PIN.
+                    </div>
+                </div>
+            </div>
+            <!--Card-body END-->
+        </div>
+
+        <!--Personal Details-->
+        <div class="card mx-auto mt-4 col-md-10">
+            <div class="card-header text-secondary">
+                Personal Details
+            </div>
+            <!--Card-body START-->
+            <div class="card-body pe-4">
+
+                <fieldset>
+                    <!--First name-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="FirstName" class="col-md-3 text-end mt-3">First name<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <input asp-for="FirstName" type="text" id="txtFirstName" class="form-control" data-val="true" data-val-length-max="30" data-val-required="The first name is required." placeholder="Enter first name" onkeydown="return /[a-z]/i.test(event.key)">
+                            <input asp-for="PatientID" type="hidden">
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--Middle name-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="MiddleName" class="col-md-3 text-end mt-3">Middle name</label>
+                        <div class="col-md-9">
+                            <input asp-for="MiddleName" id="txtMiddleName" type="text" class="form-control" data-val="true" data-val-length-max="30" placeholder="Enter middle name" onkeydown="return /[a-z]/i.test(event.key)">
+                        </div>
+                    </div>
+
+                    <!--Last name-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="LastName" class="col-md-3 text-end mt-3">Last name<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <input asp-for="LastName" id="txtLastName" type="text" class="form-control" data-val="true" data-val-length-max="30" data-val-required="The last name is required." placeholder="Enter last name" onkeydown="return /[a-z]/i.test(event.key)">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--Birth of date-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="DOB" class="col-md-3 text-end mt-3">Date of birth<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <div class="input-group mb-3">
+                                <input asp-for="DOB" id="dob" type="hidden" />
+                                <input  asp-for="Sex" id="gender" type="hidden" />
+                                <input asp-for="DOB" id="datepicker" readonly="true" type="text" class="form-control" value="@Model.DOB.ToString("MM-dd-yyyy")" />
+                                <span class="input-group-text" id="btnPicker">
+                                    <span class="bi bi-calendar"></span>
+                                </span>
+                            </div>
+                            <small class="form-text">If client is unable to recall date of birth, then estimate client’s age and set the date of birth accordingly.</small>
+                            <span asp-validation-for="DOB" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--Sex-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="Sex" class="control-label col-md-3 text-end mt-3">Sex<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <select asp-for="Sex" id="sex" asp-items="Html.GetEnumSelectList(typeof (Sex))" class="form-select" id="sex">
+                                <option value="">Select</option>
+                            </select>
+                            <span asp-validation-for="Sex" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--Maritual status-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="MaritalStatus" class="col-md-3 text-end mt-3">Marital status <span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <select asp-for="MaritalStatus" asp-items="Html.GetEnumSelectList(typeof(MaritalStatuses))" class="form-select" id="maritualStatus">
+                                <option value="">Select</option>
+                            </select>
+                            <span asp-validation-for="MaritalStatus" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--Country of origin-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="CountryID" class="col-md-3 text-end mt-3">Country of origin<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <select asp-for="CountryID" class="form-select" id="CountryID">
+                                @foreach (var item in drpcountry)
+                                {
+                                    <option value="@item.CountryID">@item.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="CountryID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <!--card-body END-->
+        </div>
+
+        <!--Address and Contact Information-->
+        <div class="card mx-auto mt-4 col-md-10">
+            <div class="card-header text-secondary">
+                Address and Contact Information
+            </div>
+            <!--Card-body start-->
+            <div class="card-body">
+                <!--Residential address-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label asp-for="ContactAddress" class="col-md-3 text-end mt-4">Residential address<span class="text-danger" style="font-size:14px;"> *</span></label>
+                    <div class="col-md-9">
+                        <textarea asp-for="ContactAddress" class="form-control" id="ContactAddress" rows="3"></textarea>
+                        <span asp-validation-for="ContactAddress" id="ContactAddressError" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!--Inkhundla-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label asp-for="TinkhundlaID" class="col-md-3 text-end mt-3">Inkhundla<span class="text-danger" style="font-size:14px;"> *</span></label>
+                    <div class="col-md-9">
+                        <select asp-for="TinkhundlaID" class="form-select" id="ddlInkhundla" onchange="onddlInkhundlachange()">
+                            <option value="">Select</option>
+                            @foreach (var item in drpInkhundla)
+                            {
+                                <option value="@item.TinkhundlaID">@item.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="TinkhundlaID" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!--Chiefdom-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label asp-for="ChiefdomID" class="col-md-3 text-end mt-3">Chiefdom<span class="text-danger" style="font-size:14px;"> *</span></label>
+                    <div class="col-md-9">
+                        <select asp-for="ChiefdomID" class="form-select" id="ddlChiefdomID">
+                            @foreach (var item in drpChiefdom)
+                            {
+                                <option value="@item.ChiefdomID">@item.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="ChiefdomID" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!--Postal Code-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label asp-for="PostalAddress" class="col-md-3 text-end mt-4">Postal address</label>
+                    <div class="col-md-9">
+                        <textarea asp-for="PostalAddress" class="form-control text-box multi-line" rows="3" data-val="true" data-val-length="The field Postal address must be a string with a maximum length of 500." data-val-length-max="500" maxlength="500"></textarea>
+                    </div>
+                </div>
+
+                <!--Cell phone-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label class="control-label col-md-3 text-end mt-3" for="Cellphone">Cellphone<span class="text-danger" style="font-size:14px;"> *</span></label>
+                    <div class="col-md-3">
+                        <input asp-for="CellphoneCountryCode" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length="Cellphone country code should be atleast 3 digits" data-val-required="Country code is required!" data-val-length-min="3" data-val-length="The field Country code must be a number with a maximum length of 3." data-val-length-max="3" maxlength="3" placeholder="Country code" title="Type a 3 digit country code in this field." type="text">
+                        <span asp-validation-for="CellphoneCountryCode" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <input asp-for="Cellphone" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length="Cellphone should be atleast 8 digits" data-val-length-max="15" data-val-length-min="8" data-val-required="Cellphone is required!" id="txtCellphone" maxlength="15" placeholder="Cellphone number" title="Type cellphone number in this field." type="text">
+                        <span asp-validation-for="Cellphone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!--Land phone-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label class="control-label col-md-3 text-end mt-3" for="Cellphone">Land phone</label>
+                    <div class="col-md-3">
+                        <input asp-for="LandPhoneCountryCode" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length="The field Land phone must be a number with a maximum length of 3." data-val-length-max="3" maxlength="3" placeholder="Country code" title="Type a 3 digit country code in this field." type="text">
+                    </div>
+                    <div class="col-md-6">
+                        <input asp-for="LandPhone" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length-max="15" maxlength="15" placeholder="Land phone number" title="Type landphone number in this field." type="text">
+                    </div>
+                </div>
+
+                <!--Email Address-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label asp-for="Email" class="col-md-3 text-end mt-3">Email address</label>
+                    <div class="col-md-9">
+                        <input asp-for="Email" type="email" class="form-control" data-val="true" data-val-length-max="60" aria-describedby="emailHelp">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+            </div>
+            <!--Card body END-->
+        </div>
+
+        <!--Button START-->
+        <div class="card mx-auto mt-4 col-md-10">
+            <div class="card-body">
+                <div class="text-center">
+                    <div class="form-group fs-3">
+                        <button class="btn btn-primary btn-big mt-3 mx-2" value="Create" type="submit">
+                            <span>Save</span>
+                        </button>
+                        <a class="btn btn-big-back mt-3 mx-2" href="/Clients/ProfileSearch"><span> Back</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" />
+        <!--Button END-->
+    </form>
+</div>
+
+@section Scripts {
+@*<script type="text/javascript" src="~/lib/jquery/dist/jquery.min.js"></script>*@
+<script type="text/javascript" src="~/js/ClientEdit.js"></script>
+
+<!--- For datetimepicker -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+
+}

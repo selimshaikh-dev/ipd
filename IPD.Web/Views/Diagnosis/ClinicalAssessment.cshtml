@@ -1,0 +1,64 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model System.Collections.Generic.List<SurgeriesDto>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Logo-->
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<div class="col-12">
+    <a href="/Home/Index">
+        <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+    </a>
+</div>
+<br />
+<h1 class="text-center text-capitalize" style="font-size:36px;">Client Management</h1>
+
+<!--Main container Start-->
+<div class="container body-content">
+    <br />
+    <div style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <div class="container" style="width:60%; margin-top:15px;">
+        <div class="row text-center g-3 p-2">
+            <div class="col-md-2"></div>
+            <!--International Referral-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card w-100 box border-dark text">
+                    <div class="text-center pt-2">
+                        <a href="/ChiefComplaints/Index">
+                            <img src="/images/complain.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3">
+                        </a>
+                        @*/LocalReferral/Index*@
+                        <span href="/ChiefComplaints/Index" class="fw-bold fs-6 text-dark">Chief<br /> Complaints</span>
+                    </div>
+                </div>
+            </div>
+
+            <!--Inter Department Referral-->
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card w-100 box border-dark text">
+                    <div class="text-center pt-2">
+                        <a href="/PatientExaminations/Index">
+                            <img src="/images/daigonisis.png" width="90" class="mx-auto d-block mt-2 img-fluid mb-3">
+                        </a>
+                        <span href="/PatientExaminations/Index" class="fw-bold fs-6 text-dark">Examination/ Diagnosis<br />Treatment & Medication Plant</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Main container End-->

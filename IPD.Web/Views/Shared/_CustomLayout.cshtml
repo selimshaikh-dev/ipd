@@ -1,0 +1,153 @@
+﻿@using Microsoft.AspNetCore.Http
+@using IPD.Web.Extensions
+@inject IHttpContextAccessor httpContextAccessor
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    @*<meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />*@
+    <title>@ViewData["Title"] CMIS(IPD)</title>
+    <link rel="stylesheet" href="~/lib/bootswatch/cerulean/bootstrap.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/IPD.Web.styles.css" asp-append-version="true" />
+    <!--Bootstrap icon cdn-->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+
+    <!--Essential JS cdn-Client side Validation-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.1/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/3.2.11/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <style>
+    .navbar-dark .navbar-nav .nav-link{
+        color: #fff !important;
+    }
+    </style>
+</head>
+<body>
+    @{
+        var facility = httpContextAccessor.HttpContext?.Session.GetCurrentFacility();
+    }
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">@facility</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0 profile-menu">
+                        @{
+                            var currentUser1 = httpContextAccessor.HttpContext?.Session.GetCurrentUser();
+                            if (currentUser1 == null)
+                            {
+                                <span style="height:36px;">
+                                <li class="nav-item d-none">
+                                    <a class="nav-link" href="@Url.Action("ProfileSearch", "Clients")">Search</a>
+                                </li>
+                                </span>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("ProfileSearch", "Clients")">Search</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("PatientList", "Report")">Reports</a>
+                                </li>
+                            }
+                        }
+
+                        @{
+                            var clientId = httpContextAccessor.HttpContext?.Session.GetCurrentClientId();
+                            if (!string.IsNullOrEmpty(clientId) && Html.ShouldShowClientManagement())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("ManageClient", "Clients", new { patientId = clientId })">Manage Client</a>
+                                </li>
+                            }
+
+                            var admissionId = httpContextAccessor.HttpContext?.Session.GetCurrentAdmissionId();
+                            if (!string.IsNullOrEmpty(admissionId) && Html.ShouldShowAdmission())
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="@Url.Action("Index", "Admissions", new { patientId = clientId })">Admission</a>
+                                </li>
+                            }
+
+                            var currentUser = httpContextAccessor.HttpContext?.Session.GetCurrentUser();
+                            if (currentUser != null)
+                            {
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle data-bs-target" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        @currentUser.FirstName @currentUser.MiddleName @currentUser.LastName
+                                        <i class="fas fa-user"></i>
+                                    </a>
+                                    <ul style="width: 105px !important; margin: 0px 89%;" class="me-5 dropdown-menu" aria-labelledby="navbarDropdown">
+                                        <li><a class="dropdown-item" href="/Users/Edit"><i class="fas fa-sliders-h fa-fw"></i>Edit User Profile</a></li>
+                                        <li><a class="dropdown-item" href="/Users/ChangePassword"><i class="fas fa-cog fa-fw"></i> Change Password</a></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" href="/"><i class="fas fa-sign-out-alt fa-fw"></i>Logout</a></li>
+                                    </ul>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container-fluid">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!--Footer START-->
+    <footer>
+        <div class="container">
+            <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+            <div class="col-md-8 d-inline-block">
+                <img src="/images/IHM-small.jpg" width="80" height="30" class="img-fluid">
+            </div>
+            <div class="col-md-3 float-end footerColor mb-2 d-inline-block">
+                <span style="font-size:10px;" class=""><i class="bi bi-telephone-fill"></i>&nbsp;&nbsp;Toll Free Helpline: 000 000 0</span>
+            </div>
+        </div>
+        <br />
+    </footer>
+    <!--Footer END-->
+    <!---Essential Link for datetimepicker -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+     
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    @*  <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
+
+<script>
+    document.querySelectorAll('.dropdown-toggle').forEach(item => {
+        item.addEventListener('click', event => {
+
+            if (event.target.classList.contains('dropdown-toggle')) {
+                event.target.classList.toggle('toggle-change');
+            }
+            else if (event.target.parentElement.classList.contains('dropdown-toggle')) {
+                event.target.parentElement.classList.toggle('toggle-change');
+            }
+        })
+    });
+</script>

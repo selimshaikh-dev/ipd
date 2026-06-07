@@ -1,0 +1,205 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+@using IPD.Web.Extensions
+@model List<RequestForReferralsDto>
+
+@{
+    ViewBag.Title = "International Referrals";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <div class="col-md-12">
+        <h1 class="mt-3 text-center" style="font-size:36px; font-weight:700;">Request for International/Local Referral</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!--Chief Complaint-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+        <!--Local Referral-->
+        <div class="col-md-6 mt-2">
+            <a class="btn btn-primary btn-big fs-6" href="@Url.ActionLink("Create", "InternationalReferral")" style="text-align: center; line-height: 28px;"><span>Add New</span></a>
+            @foreach (var requestForReferral in Model.Where(x => x.InternationalReferral != null))
+            {
+                var InternationalReferral = requestForReferral.InternationalReferral;
+                <div class=" card mt-3 mb-3 table-responsive">
+                    <div class="card-body pb-0">
+                        <table class="table" style="font-size: 15px;">
+                            <tbody>
+                                <tr>
+                                    <td colspan="6" class="fs-5 text-secondary shadow-sm" style="background-color: rgba(0, 0, 0, .03);">
+                                        @{
+                                            var InternationalReferralText = InternationalReferral.ReferralType == (int)ReferralTypeEnum.InternationalReferral
+                                                    ? "International Referral"
+                                                    : "Local Referral";
+                                        }
+                                        <span>@InternationalReferralText</span>
+                                        @if (DateTime.Now.IsWithin24Hours(InternationalReferral.DateCreated ?? DateTime.Now))
+                                        {
+                                            <span class="float-end">
+                                                <a href="@Url.ActionLink("Edit", "InternationalReferral", new { internationalReferralId = InternationalReferral.InternationalReferralID })" class="btn btn-primary backBtn"> Edit</a>
+                                            </span>
+                                        }
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th width="30%">Phalala</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.Phalala</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Date of referral</th>
+                                    <td width="3">:</td>
+                                        <td width="67%">
+                                        <span>@InternationalReferral.Date.ToString("dd-MM-yyyy")</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Time of referral</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.Time.ToString("HH:mm")</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Referring specialist</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.ReferringSpecialist</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Practice number</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.PracticeNumber</span>
+                                    </td>
+                                </tr>
+
+                                 <tr>
+                                    <th width="30%">Reason(s) for referral</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.ReasonReferral</span>
+                                    </td>
+                                 </tr>
+
+                                 <tr>
+                                    <th width="30%">Contact details</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.ContactDetails</span>
+                                    </td>
+                                </tr>
+
+                                 <tr>
+                                    <th width="30%">Employment number</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.EmploymentNumber</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Discipline</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.Discipline</span>
+                                    </td>
+                                </tr>
+  
+
+                                @if (requestForReferral.InternationalReferral != null)
+                                {
+                                    var InternationalReferrals = requestForReferral.InternationalReferral;
+
+                                  <tr>
+                                    <th width="30%">Chronic illness</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.ChronicIllness</span>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th width="30%">Employer</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.Employer</span>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th width="30%">Occupation</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.Occupation</span>
+                                    </td>
+                                  </tr>
+
+                                   <tr>
+                                    <th width="30%">Allergies</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.Allergies</span>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th width="30%">ID number</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.IDNumber</span>
+                                    </td>
+                                  </tr>
+
+                                  <tr>
+                                    <th width="30%">Passport number</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@InternationalReferral.PassportNumber</span>
+                                    </td>
+                                  </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            <a href="/Referral/ReferralOptions" class="btn btn-sm-back mt-3 mb-3" style="text-align: center; line-height: 28px;">Back</a>
+        </div>
+
+        <!--Daily observation-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("DailyObservation")
+        </div>
+        <!--Body content End-->
+    </div>
+</div>
+<!--Main container End-->

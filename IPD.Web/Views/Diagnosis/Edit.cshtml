@@ -1,0 +1,152 @@
+﻿@using IPD.Domain.Dto
+@model PatientDiagnosisDto
+
+@{
+    ViewData["Title"] = "Clinical Assessment";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/themes/default/style.min.css" />
+
+<!--Logo-->
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container mt-3">
+
+    <div class="col-md-10 offset-1 text-center">
+        <h1 class="mt-3" style="font-size:36px;font-weight:700">Diagnosis</h1>
+        <h5 style="font-weight:600">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+        <hr class="mt-4" style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 offset-md-1 mt-4">
+        @await Component.InvokeAsync("ClientClinicInfo")
+    </div>
+
+<!--Body content Start-->
+<form id="form-diagnosis" name="DiagnosisForm" asp-action="Edit" asp-controller="Diagnosis" method="post" onsubmit="return validateForm()">
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="row mt-3">
+        <!--Clinical Assessment-->
+        <div class="col-md-3 offset-md-1 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+            <!--Diagnosis-->
+            <div class="col-md-7">
+                @*<div class="responsive_div">*@
+                <input type="hidden" asp-for="AdmissionID" />
+                <input type="hidden" asp-for="PatientDiagnosisID" />
+
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Diagnosis
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-4">
+                        <fieldset>
+                            <!--Diagnosis-->
+                            <div class="form-group mb-3 me-2 ms-2 row">
+                                <select asp-for="PatientsDiseaseIds" style="display:none;"></select>
+                                <input type="text" class="form-control text-box js-disease-tree--search" placeholder="Search diagnosis" />
+                                <div class="js-disease-tree"></div>
+                                <span asp-validation-for="PatientsDiseaseIds" class="text-danger"></span>
+                            </div>
+
+                            <!--Findings-->
+                            <div class="form-group mb-2 me-2 ms-2 row">
+                                <label asp-for="DiagnosisNote">Findings<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="DiagnosisNote" name="DiagnosisNote" class="form-control text-box multi-line" rows="5"></textarea>
+                                <span asp-validation-for="DiagnosisNote" id="DiagnosisNoteerror" class="text-danger"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+
+                    <div class="col-12 text-center mb-3">
+                        <button type="submit" class="btn btn-primary btn-big mt-1 mx-2" role="button"><span> Save</span></button>
+                        <a class="btn btn-big-back mt-1 mx-2" href="/Diagnosis/Index"><span> Back</span></a>
+                    </div>
+                </div>
+                @*</div>*@
+            </div>
+
+            <!--Daily observation-->
+            @* <div class="col-md-4 mt-2">
+                @await Component.InvokeAsync("DailyObservation")
+                </div>  *@
+        </div>
+    </form>
+    <!--Body content End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.2.1/jstree.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-disease-tree').jstree({
+            conditionalselect: function(node) {
+                return node.children.length === 0;
+            },
+            checkbox: {
+                visible: false,
+                three_state: false,
+                cascade: ''
+            },
+            plugins : ['conditionalselect', 'search', 'checkbox'],
+            core: {
+                multiple: true,
+                data: {
+                    url: function() {
+                        return '/Diagnosis/LoadDiagnosisCodesTree';
+                    }
+                }
+            }
+        }).on('ready.jstree', function() {
+            $('.js-disease-tree').jstree().select_node(JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.DiagonosisDetails.Select(x => x.DiseaseID).ToArray()))'));
+            var timeout = false;
+            $('.js-disease-tree--search').keyup(function () {
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                timeout = setTimeout(function () {
+                    var searchValue = $('.js-disease-tree--search').val();
+                    $('.js-disease-tree').jstree().search(searchValue);
+                }, 250);
+            });
+        });
+
+            $('#form-diagnosis').submit(function() {
+                var diseaseIds = $('.js-disease-tree').jstree().get_selected();
+                $('#PatientsDiseaseIds').html('');
+                if (diseaseIds.length > 0) {
+                    diseaseIds.forEach(function(diseaseId) {
+                        $('#PatientsDiseaseIds').append(`<option value="${diseaseId}" selected></option>`);
+                    });
+                }
+                return ('#form-diagnosis').validate().form();
+            });
+        });
+
+
+      //Validation form
+           function validateForm() {
+        let a = document.forms["DiagnosisForm"]["DiagnosisNote"].value;
+
+        if (a == "") {
+                document.getElementById("DiagnosisNoteerror").innerHTML = "The DiagnosisNote is required!";
+                return false;
+            } else {
+                document.getElementById("DiagnosisNoteerror").innerHTML = " ";
+            }
+        }
+    </script>
+}

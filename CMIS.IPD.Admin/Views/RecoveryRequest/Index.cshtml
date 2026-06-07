@@ -1,0 +1,112 @@
+﻿@model IPD.Domain.Dto.ReportPickerDto
+@using IPD.Domain.Entities
+
+@{
+   ViewBag.Title = "Index";
+   Layout = "~/Views/Shared/_CustomLayout.cshtml";
+
+   List<RecoveryRequest> recoveryRequest = new List<RecoveryRequest>();
+   recoveryRequest = (List<RecoveryRequest>)ViewBag.RecoveryRequestList;
+}
+<!--Custom CSS-->
+@*<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">*@
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>*@
+@*<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>*@
+
+<div class="row custom-margin-parent-div">
+     <!--Left Navigation-->
+    @Html.Partial("_LeftNavigation")
+
+   <div class="col-lg-8 col-md-8 col-sm-12 pt-2">
+      <h2>Password Recovery</h2>
+      <form asp-action="Index" asp-controller="RecoveryRequest" method="post">
+         <div class="card">
+            <div class="card-body">
+                  <div class="row form-group">
+                     <div class="col-md-2 control-label">
+                        <label asp-for="DateFrom" class="mt-2">Date From</label>
+                     </div>
+
+                     <div class="col-md-3">                        
+                        <input asp-for="DateFrom" value=" " data-val-required="Please select Date Form." class="form-control"/>
+                        <span asp-validation-for="DateFrom" class="text-danger"></span>
+                     </div>
+
+                     <div class="col-md-2 control-label">
+                        <label asp-for="DateTo" class="mt-2">Date To</label>
+                     </div>
+
+                     <div class="col-md-3">
+                        <input asp-for="DateTo" value=" " data-val-required="Please select Date To." class="form-control"/>
+                        <span asp-validation-for="DateTo" class="text-danger"></span>
+                     </div>
+
+                     <div class="col-md-2">
+                        <input type="submit" value="Load" class="btn btn-primary" />
+                     </div>
+                  </div>
+            </div>
+         </div>
+      </form>
+
+      @if (ViewBag.Message != null)
+      {
+         <div class="alert alert-success text-center">
+            @ViewBag.Message
+         </div>
+      }
+
+      <table class="table mt-3">
+         <tr>
+            <th>
+               @Html.DisplayName("PIN")
+            </th>
+            <th>
+               @Html.DisplayName("Username")
+            </th>
+            <th>
+               @Html.DisplayName("Cellphone")
+            </th>
+            <th></th>
+         </tr>
+
+         @if (recoveryRequest != null)
+         {
+            foreach (var item in recoveryRequest)
+            {
+               <tr>
+                  <td>
+                     @Html.DisplayFor(modelItem => item.UserAccounts.NationalID)
+                  </td>
+                  <td>
+                     @Html.DisplayFor(modelItem => item.Username)
+                  </td>
+                  <td>
+                     @Html.DisplayFor(modelItem => item.Cellphone)
+                  </td>
+                  <td>
+                     @Html.ActionLink("Reset", "UpdatePassword", new { id = item.UserAccountID, requestID = item.RecoveryRequestID }, htmlAttributes: new { @class = "btn btn-primary" })
+                  </td>
+               </tr>
+            }
+         }
+      </table>
+   </div>
+</div>
+
+@section Scripts {
+
+   <script type="text/javascript">
+      $(document).ready(function() {
+
+          function BuildDatePicker() {
+              $("input[type=datetime]").datepicker({
+                  dateFormat: "mm/dd/yy",
+                  changeMonth: true,
+                  changeYear: true,
+                  yearRange: "-90:+05"
+              });
+          }
+      });
+   </script>
+}

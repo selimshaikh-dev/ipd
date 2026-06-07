@@ -1,0 +1,94 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+@{
+    ViewBag.Title = "Post Surgery";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+@model PostSurgeriesDto
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<h1 class="text-center text-capitalize mt-3" style="font-size:36px;">Post Surgery</h1>
+<h5 class="text-center">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <form asp-action="Edit" asp-controller="PostSurgeries" method="post">
+        <div class="row mt-3">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!--Chief Complaint-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <div class="col-md-6">
+
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Edit Post Surgery
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-3">
+                        <fieldset>
+                            <input type="hidden" asp-for="SurgeryID" value="@Model.SurgeryID" />
+                            <input type="hidden" asp-for="PostSurgeryID" value="@Model.PostSurgeryID" />
+
+                            <!--SurgeryDetails-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="SurgeryDetails">Surgery details<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="SurgeryDetails" data-val-required="The Surgery details is required." value="@Model.SurgeryDetails" class="form-control" rows="4" type="text"></textarea>
+                                <span asp-validation-for="SurgeryDetails" class="text-danger"></span>
+                            </div>
+
+                            <!--Findings-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="Findings">Findings<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="Findings" data-val-required="The Findings is required." value="@Model.Findings" class="form-control" rows="4" type="text"></textarea>
+                                <span asp-validation-for="Findings" class="text-danger"></span>
+                            </div>
+
+                            <!--PostSurgeryPlan-->
+                            <div class="form-group mb-3 me-0 ms-0">
+                                <label asp-for="PostSurgeryPlan">Post surgery plan<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="PostSurgeryPlan" data-val-required="The Post surgery plan is required." value="@Model.PostSurgeryPlan" class="form-control" rows="4" type="text"></textarea>
+                                <span asp-validation-for="PostSurgeryPlan" class="text-danger"></span>
+                            </div>
+
+                            <!--PatientsCondition-->
+                            <div class="form-group mb-3">
+                                <label asp-for="PatientsCondition">Patients condition<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <select asp-for="PatientsCondition" asp-items="Html.GetEnumSelectList(typeof(PatientsConditions))" class="form-select">
+                                    <option value="">Select</option>
+                                </select>
+                                <span asp-validation-for="PatientsCondition" class="text-danger"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+                    <div class="col-12 text-center mb-3">
+                        <button class="btn btn-primary btn-big mt-1 mx-2" type="submit" role="button"><span> Save</span></button>
+                        <a class="btn btn-big-back mx-2" href="/Surgeries/Index"><span> Back</span></a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!--Daily observation-->
+            <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("DailyObservation")
+            </div>
+        </div>
+    </form>
+    <!--Body content End-->
+
+</div>
+<!--Main container End-->

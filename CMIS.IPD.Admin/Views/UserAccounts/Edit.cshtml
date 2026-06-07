@@ -1,0 +1,110 @@
+﻿@model IPD.Domain.Dto.UserRoleDto
+@using static IPD.Domain.Constants.Enumerators
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<style>
+    .form-control{
+        height: 40px !important;
+    }
+</style>
+
+<div class="row m-4">
+    @Html.Partial("_LeftNavigation")
+
+    <div class="col-md-8">
+        <form asp-action="Edit" asp-controller="UserAccounts" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserID" />
+                <div class="card mt-3">
+                    <div class="card-header">
+                        Login/Access Details
+                    </div>
+
+                    <div class="card-body">
+                        <div class="form-horizontal">
+                        <!--USERNAME-->
+                        <div class="form-group row offset-1">
+                            <div class="col-md-3 offset-1 control-label text-end">
+                                <label class="me-2">Name</label>
+                            </div>
+                            <div class="col-md-7">
+                                <label class="control-label">@Model.Name</label>
+                            </div>
+                       </div>
+
+                       <!--USERNAME-->
+                       <div class="form-group row offset-1 mt-3">
+                            <div class="col-md-3 offset-1 control-label text-end">
+                                <label class="me-2">User name</label>
+                            </div>
+                            <div class="col-md-7">
+                                <label class="control-label">@Model.Username</label>
+                            </div>
+                       </div>
+
+                       <!--USER TYPE-->
+                       <div class="form-group row mt-2 offset-2 mt-3">
+                            <div class="col-md-3 col-md-offset-1 control-label text-end mt-2">
+                                <label asp-for="UserType">User type</label>
+                                @*<span class="bi bi-asterisk text-danger" style="font-size:10px;"></span>*@
+                            </div>
+                            <div class="col-md-7">
+                                <select asp-for="UserType" class="form-control" asp-items="Html.GetEnumSelectList(typeof (UserType))" ></select>
+                                <span asp-validation-for="UserType" class="text-danger"></span>
+                            </div>
+                       </div>
+
+                        <!--PASSWORD-->
+                        <div class="form-group row mt-2 offset-2 mt-3">
+                            <div class="col-md-3 col-md-offset-1 control-label text-end mt-2">
+                                <label asp-for="Password">Password</label>
+                            </div>
+                            <div class="col-md-7">
+                                <input asp-for="Password" id="txtPassword" type="text" name="Password" class="form-control">
+                            </div>
+                        </div>
+
+                        <!--CONFIRM PASSWORD-->
+                        <div class="form-group row mt-2 offset-2 mt-3">
+                            <div class="col-md-3 col-md-offset-1 control-label text-end mt-2">
+                                <label asp-for="ConfirmPassword">Confirm password</label>
+                            </div>
+                            <div class="col-md-7">
+                                <input asp-for="ConfirmPassword" id="txtConPassword" type="text" name="ConfirmPassword" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <div class="form-group text-center offset-3">
+                            <div class="col-md-offset-4 col-md-8">
+                                <button class="btn btn-save mx-2" type="submit" role="button"><span> Save</span></button>
+                                <a href="@Url.ActionLink("Index", "UserAccounts")" type="button" class="btn btn-back mx-2">Back</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @*</div>*@
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+               $("#txtPassword").attr('type','password');
+                $("#txtConPassword").attr('type','password');           
+        });
+
+    </script>
+}

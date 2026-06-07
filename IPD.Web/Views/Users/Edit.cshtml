@@ -1,0 +1,336 @@
+﻿@using IPD.Domain.Dto
+@model UserEditDto
+@using static IPD.Domain.Constants.Enumerators
+@{
+    ViewData["Title"] = "UserRegistration";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var drpFacilities = ViewBag.facilities;
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Main Container START-->
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+<br />
+<h1 class="text-center text-capitalize" style="font-size:38px;">Edit User Profile</h1>
+<h5 class="text-center">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+
+<div class="container">
+    <form asp-action="Edit" asp-controller="Users" method="post">
+        <!--Personal Details-->
+        <div class="card mx-auto mt-4 col-md-10">
+            <div class="card-header text-secondary">
+                Personal Details
+            </div>
+            <!--Card-body START-->
+            <div class="card-body pe-4">
+
+                <fieldset>
+                    <div class="form-group mb-3 me-4 ms-4">
+                        <input asp-for="UserAccountID" type="hidden" class="form-control">
+                        <input asp-for="UserName" type="hidden" class="form-control">
+                        <input asp-for="Password" type="hidden" class="form-control">
+                    </div>
+
+                    <!--NationalID-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label class="col-md-3 text-end mt-3">PIN<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <input asp-for="NationalID" class="form-control text-box single-line"
+                                   data-val-length-max="13" data-val-required="PIN is required!" id="txtPIN" maxlength="13"
+                                   type="text" title="The field PIN must be a number with a maximum length of 13." onkeypress="return onlyNumberKey(event)">
+                            <span asp-validation-for="NationalID" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--First name-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label for="firstName" class="col-md-3 text-end mt-3">First name<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <input asp-for="FirstName" type="text" id="txtFirstName" onkeydown="return /[a-z]/i.test(event.key)"
+                                   class="form-control" data-val="true" data-val-length-max="30" data-val-required="The first name is required!" placeholder="Enter first name">
+                            <span asp-validation-for="FirstName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--Middle Name-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label for="middlename" class="col-md-3 text-end mt-3">Middle Name</label>
+                        <div class="col-md-9">
+                            <input asp-for="MiddleName" id="txtMiddleName" type="text" onkeydown="return /[a-z]/i.test(event.key)" class="form-control" placeholder="Enter middle name">
+                        </div>
+                    </div>
+
+                    <!--Last Name-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label asp-for="LastName" class="col-md-3 text-end mt-3">Last Name<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <input asp-for="LastName" id="txtLastName" type="text" onkeydown="return /[a-z]/i.test(event.key)"
+                            class="form-control" data-val="true" data-val-length-max="30" data-val-required="The last name is required!" placeholder="Enter last name">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--Date of birth-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label for="DOB" class="col-md-3 text-end mt-3">Date of birth<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <div class="input-group mb-3">
+                                @*<input asp-for="DOB" id="dob" type="hidden" />*@
+                                @*<input  asp-for="Sex" id="gender" type="hidden" />*@
+                                <input asp-for="DOB" id="datepicker" readonly="true" type="text" class="form-control" value="@Model?.DOB.ToString("yyyy-MM-dd")" data-val-required="The Date of birth is required." />
+                                <span class=" input-group-text " id="btnPicker">
+                                    <span class="bi bi-calendar"></span>
+                                </span>
+                            </div>
+                            <span asp-validation-for="DOB" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <!--sex-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label for="sex" class="col-md-3 text-end mt-3">Sex<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <select asp-for="Sex" required id="ddlSex" asp-items="Html.GetEnumSelectList(typeof (Sex))" class="form-select" id="sex">
+                                <option value="">Select</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!--FacilityID-->
+                    <div class="form-group mb-3 me-4 ms-4 row">
+                        <label for="FacilityID" class="col-md-3 text-end mt-3">Facility<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-md-9">
+                            <select name="FacilityID" required class="form-select" id="FacilityID" data-val="true" data-val-required="The facility is required!" asp-for="FacilityID">
+                                <option selected value="">Select</option>
+                                @foreach (var ch in drpFacilities)
+                                {
+                                    <option value="@ch.FacilityID">@ch.FacilityName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FacilityID" class="text-danger"></span>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <!--card-body END-->
+        </div>
+
+        <!--Address and Contact Information-->
+        <div class="card mx-auto mt-4 col-md-10">
+            <div class="card-header text-secondary">
+                Address and Contact Information
+            </div>
+            <!--Card body start-->
+            <div class="card-body">
+                <!--Cell phone-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label class="control-label col-md-3 text-end mt-3" for="Cellphone">Cellphone<span class="text-danger" style="font-size:14px;"> *</span></label>
+                    <div class="col-md-3">
+                        <input asp-for="CellphoneCountryCode" class="form-control text-box single-line" data-toggle="tooltip" data-val="true" data-val-length="Cellphone country code should be atleast 3 digits" data-val-length="The field Country code must be a number with a maximum length of 3." maxlength="3" data-val-required="Required." data-val-length-min="3" placeholder="Country code" title="Type a 3 digit country code in this field." type="text">
+                        <span asp-validation-for="CellphoneCountryCode" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <input asp-for="Cellphone" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length="Cellphone should be atleast 8 digits" data-val-length-max="15" data-val-length-min="8" data-val-required="Cell phone is required." id="txtCellphone" maxlength="15" placeholder="Cellphone number" title="Type cellphone number in this field." type="text">
+                        <span asp-validation-for="Cellphone" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!--Land phone-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label class="control-label col-md-3 text-end mt-3" for="Cellphone">Land phone</label>
+                    <div class="col-md-3">
+                        <input asp-for="LandPhoneCountryCode" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length="The field Land phone must be a number with a maximum length of 3." data-val-length-max="3" maxlength="3" placeholder="Country code" title="Type a 3 digit country code in this field." type="text">
+                    </div>
+                    <div class="col-md-6">
+                        <input asp-for="LandPhone" class="form-control text-box single-line" onkeypress="return onlyNumberKey(event)" data-toggle="tooltip" data-val="true" data-val-length-max="15" maxlength="15" placeholder="Land phone number" title="Type landphone number in this field." type="text">
+                    </div>
+                </div>
+
+                <!--Email Address-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label for="Email" class="col-md-3 text-end mt-3">Email address</label>
+                    <div class="col-md-9">
+                        <input asp-for="Email" type="email" class="form-control" data-val="true" data-val-length-max="60" aria-describedby="emailHelp">
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <!--Contact address-->
+                <div class="form-group mb-3 me-4 ms-4 row">
+                    <label for="ContactAddress" class="col-md-3 text-end mt-4">Contact address<span class="text-danger" style="font-size:14px;"> *</span></label>
+                    <div class="col-md-9">
+                        <textarea asp-for="ContactAddress" class="form-control text-box multi-line" rows="3" data-val="true" data-val-required="The Contact address is required." data-val-length="The field Contact address must be a string with a maximum length of 250." data-val-length-max="250" maxlength="250"></textarea>
+                        <span asp-validation-for="ContactAddress" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Card body END-->
+        <!--Button START-->
+        <div class="card mx-auto mt-4 col-md-10">
+            <div class="card-body">
+                <div class="text-center">
+                    <div class="form-group fs-3">
+                        <button class="btn btn-primary btn-big mt-3 mx-2" value="Create" type="submit">
+                            <span>Save</span>
+                        </button>
+                        <a class="btn btn-big-back mt-3 mx-2" href="/Clients/ProfileSearch"><span> Back</span></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Button END-->
+    </form>
+</div>
+
+@section Scripts {
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+$(function () {
+    $("#datepicker").datepicker({
+        dateFormat: 'yy-mm-dd',
+        showButtonPanel: true,
+        changeMonth: true,
+        changeYear: true,
+        yearRange: '1900:2022',
+        inline: true,
+        maxDate: 0
+    });
+
+});
+$("#btnPicker").click(function () {
+
+    $("#datepicker").focus();
+});
+           // var pin = $("#txtPIN").val();
+
+           // //Select the radio button on load
+           // if (pin == "9999999999999") {
+           //     $("#optCode9").attr("checked", true);
+           //     BuildDatePicker();
+           // }
+           // else if (pin == "1111111111111") {
+           //     $("#optCode1").attr("checked", true);
+           //     BuildDatePicker();
+           // }
+
+           // else {
+           //     $("#optPIN").attr("checked", true);
+           //    // DisableDemographics();
+           // }
+           //});
+
+    function checkFilled() {
+        var inputVal = document.getElementById("datepicker");
+        if (inputVal.value == "") {
+            inputVal.style.backgroundColor = "white";
+        }
+        else{
+            inputVal.style.backgroundColor = "white";
+        }
+    }
+    checkFilled();
+
+    function onlyNumberKey(evt) {
+
+            // Only ASCII character in that range allowed
+            var ASCIICode = (evt.which) ? evt.which : evt.keyCode
+            if (ASCIICode > 31 && (ASCIICode < 48 || ASCIICode > 57))
+                return false;
+            return true;
+        };
+
+        function alphaOnly(event) {
+      var key = event.keyCode;
+      return ((key >= 65 && key <= 90) || key == 8);
+    }
+
+    $(document).ready(function () {
+            DisableInput();
+            function DisableInput() {
+                $("#txtPIN").bind("keypress, keydown", false);
+                //$("#firstname").bind("keypress, keydown", false);
+                //$("#middlename").bind("keypress, keydown", false);
+                //$("#lastname").bind("keypress, keydown", false);
+                //$("#datepicker").bind("keypress, keydown", false);
+                //$("#sex").bind("keypress, keydown", false);
+
+                //$("#NID").attr('disabled', true);
+                //$("#firstname").attr('disabled', true);
+                //$("#middlename").attr('disabled', true);
+                //$("#lastname").attr('disabled', true);
+                //$("#datepicker").attr('disabled', true);
+                //$('#sex').attr('disabled', true);
+            }
+        });
+
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var pinNumber = $("#txtPIN").val();
+
+        if (pinNumber == "9999999999999" || pinNumber == "1111111111111") {
+            BuildDatePicker();
+            EnableDemographics();
+            removeReadonlyAttr();
+        }
+        else {             
+            DisableDemographics();
+            addReadonlyAttr();
+        }
+
+    }); 
+    
+    
+        function DisableDemographics() {
+            $("#txtFirstName").bind("keypress, keydown", false);
+            $("#txtMiddleName").bind("keypress, keydown", false);
+            $("#txtLastName").bind("keypress, keydown", false);
+            $("#txtDOB").bind("keypress, keydown", false);
+            $("#txtPIN").bind("keypress, keydown", false);
+
+            $("#ddlSex").mousedown(function () {
+                return false;
+            });
+        }
+
+        function EnableDemographics() {
+            $("#txtFirstName").unbind("keypress, keydown")
+            $("#txtMiddleName").unbind("keypress, keydown");
+            $("#txtLastName").unbind("keypress, keydown");
+            $("#txtDOB").unbind("keypress, keydown");
+            ("#txtPIN").unbind("keypress, keydown");
+        }
+        function removeReadonlyAttr() {
+    console.log('remove');
+    $('#txtFirstName').attr('readonly', false);
+    $('#txtMiddleName').attr('readonly', false);
+    $('#txtLastName').attr('readonly', false);
+    $('#datepicker').attr('disabled', false);
+    $('#sex').attr('disabled', false);
+    $('#dob').attr("disabled", true);
+    $('#gender').attr('disabled', true);
+}
+function addReadonlyAttr() {
+    console.log('add');
+    $('#txtFirstName').attr('readonly', true);
+    $('#txtMiddleName').attr('readonly', true);
+    $('#txtLastName').attr('readonly', true);
+    $('#datepicker').attr('disabled', true);
+    $('#sex').attr('disabled', true);
+    $('#dob').attr("disabled", false);
+    $('#gender').attr('disabled', false);
+}
+</script>
+}

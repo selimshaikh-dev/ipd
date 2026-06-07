@@ -1,0 +1,392 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+@model PatientDto
+@{
+    ViewData["Title"] = "ClientRegistration";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+<br />
+
+<form method="post" name="AdvanceSearchForm" id="advanceSearchForm" onsubmit="validateForm()">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    @*<input type="hidden">*@
+
+    <!--Main container Start-->
+    <div class="container mb-4" style="width:90%;">
+        <div class="card mx-auto mt-2 col-md-10 offset-md-3">
+            <h4 class="text-center mt-2" style="font-size:22px;">Advanced Search</h4>
+
+            <!--Card-body START-->
+            <div class="card-body pe-5">
+                <!--Advanced Search-->
+                <div class="row mt-1">
+                    <!--First name-->
+                    <div class="col-md-4">
+                        <div class="form-group form-group-lg">
+                            <label asp-for="FirstName">First name</label>
+                            <span class="bi bi-asterisk text-danger" style="font-size:9px;"></span>
+                            <input asp-for="FirstName" class="form-control text-box single-line mb-2" required data-val-length="The field First name must be a string with a maximum length of 30." data-val-length-max="30" data-val-required="The First name is required." id="FirstName" maxlength="30" name="FirstName" placeholder="This is a required field..." type="text">
+                            <span asp-validation-for="FirstName" id="error" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <!--Middle Name-->
+                    <div class="col-md-4">
+                        <div class="form-group form-group-lg">
+                            <label class="control-label">Middle name</label>
+                            <input class="form-control text-box single-line mb-2" data-val-length="The field Middle name must be a string with a maximum length of 30." data-val-length-max="30" id="MiddleName" maxlength="30" name="MiddleName" type="text">
+                        </div>
+                    </div>
+                    <!--Last Name-->
+                    <div class="col-md-4">
+                        <div class="form-group form-group-lg">
+                            <label asp-for="LastName">Last name</label>
+                            <span class="bi bi-asterisk text-danger" style="font-size:9px;"></span>
+                            <input asp-for="LastName" class="form-control text-box single-line mb-2" required data-val-length="The field Last name must be a string with a maximum length of 30." data-val-length-max="30" data-val-required="The Last name field is required." id="LastName" maxlength="30" name="LastName" placeholder="This is a required field..." type="text">
+                            <span asp-validation-for="LastName" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mt-2">
+                    <!--DOB-->
+                    <div class="col-md-4">
+                        <div class="form-group form-group-lg">
+                            <label asp-for="DOB" class="control-label">Date of birth</label>
+                            <input type="text" name="DOB" class="form-control" id="datepicker">
+                            <span class="input-group-addon" id="btnPicker"></span>
+                        </div>
+                    </div>
+
+                    <!--Sex-->
+                    <div class="col-md-4">
+                        <div class="form-group form-group-lg">
+                            <label asp-for="Sex">Sex</label>
+                            <span class="bi bi-asterisk text-danger" style="font-size:9px;"></span>
+                            <select asp-for="Sex" name="Sex" asp-items="Html.GetEnumSelectList(typeof (Sex))" class="form-select" id="sex">
+                                <option selected="selected" value="">Select</option>
+                            </select>
+                            <span asp-validation-for="Sex" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!--Button Start-->
+                <div class="col-md-10 mt-3 mx-auto">
+                    <div class="text-center">
+                        <div class="form-group fs-3">
+                            <button type="button" onclick="onSubmitAdvanceSearchForm()" value="AdvanceSearch" class="btn btn-primary btn-big mt-3 mx-2" style="font-size:19px;">
+                                <span> Search</span>
+                            </button>
+                            <a class="btn btn-big-back mt-3 mx-2" style="font-size:19px;" href="/Clients/ProfileSearch">
+                                <span> Back</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!--Button End-->
+            </div>
+        </div>
+        <!--Card-body END-->
+    </div>
+</form>
+
+<div class="col-md-10 offset-md-1" id="totalDiv">
+</div>
+<div id="base">
+    <div id="resultSection">
+    </div>
+</div>
+@section scripts {
+<!--- For datetimepicker -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
+<script>
+
+    $(function () {
+        $("#datepicker").datepicker({
+            dateFormat: 'yy-mm-dd',
+            showButtonPanel: true,
+            changeMonth: true,
+            changeYear: true,
+            yearRange: '1900:2022',
+            inline: true
+        });
+
+    });
+     $("#btnPicker").click(function () {
+
+    $("#datepicker").focus();
+    });
+</script>
+
+<script>
+      function formatDate(date) {
+            var monthNames = [
+                "01", "02", "03",
+                "04", "05", "06", "07",
+                "08", "09", "10",
+                "11", "12"
+            ];
+            date = new Date(date);
+            var day = date.getDate();
+            var monthIndex = date.getMonth();
+            var year = date.getFullYear();
+            return year + '-' + monthNames[monthIndex] + '-' + day;
+        }
+
+    function onSubmitAdvanceSearchForm(){
+        $('#errorbox').hide();
+        $('#resultSection').empty();
+        let url = '@Model.baseUrl/Patients/AdvancedSearch';
+
+        let searchForm = $('#advanceSearchForm').serializeArray();
+        let searchFormObject = {};
+        $.each(searchForm,
+            function(i, v) {
+                if(v.value !== ''){
+                    if (v.name == 'DOB'){
+                         let date = new Date(v.value);
+                         console.log(date,v.value);
+                         let utc = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                         console.log(utc,date.getTime(),date.getTimezoneOffset())
+                         searchFormObject[v.name] = utc;
+                    } else {
+                         searchFormObject[v.name] = v.value;
+                    }
+                }
+            });
+        console.log(JSON.stringify(searchFormObject));
+        $.ajax({
+        type: "POST",
+        url: url,
+        data: JSON.stringify(searchFormObject),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (data) {
+            console.log('success',data);
+            let total = data.length;
+            $('#resultSection').empty();
+            if(data.length == 0){
+                let total = data.length;
+                var reg =`<div class="mx-auto col-md-10 offset-md-3 mb-3">
+                            <div class="text-center">
+                                <div class="alert" style="text-align:center;">
+                                    <h2 style="color:red; font-weight:bold">No item found!</h2>
+                                </div>
+                                <div class="text-center">
+                                    <a href="/Clients/Create" class="btn btn-primary btn-lg btn-block btn-search" onclick="onSearchClick()" style="font-size:18px;">
+                                       Register Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>`
+                  $('#totalDiv').empty()
+                    $('#resultSection').append(reg);
+            } else {
+
+            $(data).each(function(index,i){
+                let dob = moment(i.dob).format("DD-MMM-YYYY");
+                let middle=i.middleName;
+                let maritalstatus = '';
+                let gender= '';
+                let email = '';
+                let cheafdom = '';
+                let landPhone = '';
+                let tenkundula='';
+                let postalAddress='';
+
+                if(i.postalAddress != null){
+                postalAddress = i.postalAddress
+                }
+                else{
+                postalAddress = ''
+                }
+
+                if(i.chiefdoms != null){
+                cheafdom = i.chiefdoms.name
+                }
+                if(i.landPhone != null){
+                landPhone = i.landPhone
+                }
+
+                if(i.chiefdoms.tinkhundla != null){
+                tenkundula = i.chiefdoms.tinkhundla.name
+                }
+
+                if(i.email != null){
+                email = i.email
+                }
+                else{
+                email = '';
+                }
+                if(i.chiefdoms != null){
+                cheafdom = i.chiefdoms.name
+                }
+
+                if(i.sex == 1){
+                gender = 'Male';
+                }
+                else if(i.sex ==2)  {
+                        gender = 'Female';
+                }
+                else if(i.sex ==3){
+                    gender = 'Unknown'
+                }
+                else{
+                    gender= '';
+                }
+                if(i.maritalStatus == 1){
+                maritalstatus = 'Single';
+                }
+                else if(i.maritalStatus ==2)  {
+                        maritalstatus = 'Married';
+                }
+                else if(i.maritalStatus ==3)  {
+                        maritalstatus = 'Widowed';
+                }
+                else if(i.maritalStatus ==4)  {
+                        maritalstatus = 'Divorced';
+                }
+                else if(i.maritalStatus ==5)  {
+                        maritalstatus = 'Separated';
+                }
+                else{
+                        maritalstatus = '';
+                }
+                if(middle == null){
+                middle ='';
+                }
+
+                let r = `<div class="card mx-auto mt-3 col-md-10 offset-md-3">
+
+        <div class="card-body pe-4 mb-1">
+        <div class="form-horizontal form-group">
+            <div class="col-md-12 me-1 ms-1">
+            <div class="customdiv" style="margin-left: 12px;">
+                <div class="d-flex justify-content-between ms-1 me-3">
+                    <div class="fs-5 fw-bold" style="color:#317eac;">
+                         ${i.firstName} ${middle} ${i.lastName}
+                    </div>
+                     <div style="color:#317eac;">Profile registered: ${formatDate(i.dateCreated)}</div>
+                </div>
+
+                <div class="fs-6 me-2 ms-1" style="font-weight:400; color:#317eac;">
+                        UHID: ${i.uhid}
+                </div>
+            </div>
+
+            <div class="table-responsive py-2 me-3 ms-3">
+            <table class="table table-bordered table-responsive">
+              <tbody>
+                <tr>
+                  <th scope="row">PIN</th>
+                   <td>${i.nationalID}</td>
+                  <td style="font-weight:bold;">Date of Birth</td>
+                  <td> ${dob}</td>
+                  <td style="font-weight:bold;"> Sex</td>
+                  <td> ${gender}</td>
+                </tr>
+
+                <tr>
+                  <th scope="row">Cellphone</th>
+                  <td>${i.cellphone}</td>
+                  <th scope="row">Land phone</th>
+                  <td>${landPhone}</td>
+                  <td style="font-weight:bold;">Email</td>
+                  <td>${email}</td>
+                </tr>
+
+                <tr>
+                <td style="font-weight:bold;">Country of origin</td>
+                  <td>${i.countries.name}</td>
+                <td style="font-weight:bold;">Inkhundla</td>
+                  <td>${tenkundula} </td>
+                  <td style="font-weight:bold;">Chiefdom</td>
+                  <td>${cheafdom} </td>
+                </tr>
+                <tr>
+                  <th scope="row">Marital Status</th>
+                   <td>${maritalstatus}</td>
+                  <td style="font-weight:bold;">Residential address</td>
+                  <td>${i.contactAddress}</td>
+                  <th style="font-weight:bold;">Postal address</th>
+                  <td>${postalAddress} </td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+
+            <div class="mx-auto col-md-10">
+                <div class="text-center">
+                    <a href="/Clients/Edit?patientId=${i.patientID}" class="btn btn-primary btn-block btn-search mx-2 my-1" style="font-size:18px;">
+                       </span> Edit Profile
+                    </a>
+                    <a href="/Admissions?patientId=${i.patientID}" class="btn btn-primary btn-block btn-search mx-2 my-1" style="font-size:18px;">
+                         Select
+                    </a>
+                </div>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>`;
+
+    $('#resultSection').append(r);
+    $('#errorbox').hide();
+    });
+     $('#totalDiv').empty()
+     $('#totalDiv').append(`<div class="text-center">Total Record(s) Found in CMIS: ${total}</div>`)
+    }
+    },
+
+    failure: function (data) {
+        $('#resultSection').empty();
+    let reg =`<div class="mx-auto col-md-10 offset-md-3">
+                <div class="text-center">
+                    <div class="alert" style="text-align:center;">
+                        <h2 style="color:red; font-weight:bold">No item found!</h2>
+                    </div>
+                    <div class="text-center">
+                        <a href="/Clients/Create" class="btn btn-primary btn-lg btn-block btn-search" onclick="onSearchClick()" style="font-size:19px;">
+                           Register Profile
+                        </a>
+                    </div>
+                </div>
+            </div>`
+        $('#resultSection').append(reg);
+    console.log(data);
+    },
+    error: function (data) {
+     $('#resultSection').empty();
+    let reg =`<div class="mx-auto col-md-10 offset-md-3">
+                <div class="text-center">
+                    <div class="alert" style="text-align:center;">
+                        <h2 style="color:red; font-weight:bold">No item found!</h2>
+                    </div>
+                    <div class="text-center">
+                        <a href="/Clients/Create" class="btn btn-primary btn-lg btn-block btn-search" onclick="onSearchClick()" style="font-size:19px;">
+                           Register Profile
+                        </a>
+                    </div>
+                </div>
+            </div>`
+              $('#totalDiv').empty()
+            $('#resultSection').append(reg);
+    console.log(data);
+    }
+    });
+    }
+
+
+</script>
+}

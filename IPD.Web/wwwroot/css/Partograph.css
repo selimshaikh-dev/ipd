@@ -1,0 +1,211 @@
+﻿
+input, select {
+    padding: 5px !important;
+    border-radius: 5px;
+    font-size: 16px;
+    height: 29px;
+}
+
+.deliveryInfo .dv {
+    padding: 6px !important;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.deliveryInfo label {
+    font-weight: bold;
+    font-size: 15px;
+    color: #362727;
+}
+
+#hidden-panel {
+    display: none;
+}
+
+/*use form search view*/
+.textColor {
+    color: #3a87ad;
+}
+
+ p{
+     font-size : 12px !important;
+ }
+label {
+    font-weight: bold;
+    font-size: 12px;
+    color: #362727;
+}
+.partographInfo {
+    font-weight: bold;
+    font-size: 13px;
+    color: #362727;
+}
+
+.partographInfo label {
+    font-weight: bold;
+    font-size: 13px;
+    color: #362727;
+}
+
+.btnBig {
+    width: 90px;
+    height: 54px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.btn-search {
+    width: 190px;
+    /*height: 52px;*/
+    text-align: center;
+    font-weight: 700;
+}
+
+.customBtn {
+    min-width: 80px !important;
+}
+
+.ww-100 {
+    width: 85% !important;
+}
+
+/*===============================
+        PARTOGRAPH
+================================*/
+.div {
+    font-family: "Arial", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    letter-spacing: normal;
+}
+
+.card-design input {
+    width: 87px;
+    height: 25px;
+    padding: 2px 2px 2px 2px;
+    font-family: "Arial", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    letter-spacing: normal;
+    border: 1px solid #ccc;
+}
+
+select {
+    outline: none;
+    width: 58px;
+    height: 30px;
+    /*padding: 2px 2px 2px 2px;*/
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+
+.MedicineDataCell {
+   
+    text-align: center;
+    vertical-align: middle;
+    width: 2em;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+}
+
+.TempDataCell {
+    text-align: center;
+    vertical-align: middle;
+    width: 2em;
+}
+
+.highcharts-credits {
+    display: none;
+}
+
+.showInput {
+    display: none;
+}
+
+
+.ContractionTitle {
+    width: 73px !important;
+    top: 10%;
+    position: relative;
+    font-size : 12px !important;
+    /*left: -2%;*/
+}
+
+.tbl {
+    width: 803px !important;
+    margin-bottom: -50px !important;
+    font-size: 10px
+}
+td{
+    padding : 0px !important;
+}
+
+
+.sideBar {
+    position: absolute;
+    top: 397px;
+    left: 80%;
+    width: 100%;
+    z-index: 999;
+}
+.btn-custom {
+    width: 100%;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.b-1{
+    border : 1px solid !important;                           
+}
+
+.form-control{
+    font-size : 12px !important;
+}
+
+
+table .table-bordered {
+    border: 1px solid black !important;
+}
+
+    table .table-bordered > tbody > tr > td {
+        border: 1px solid black !important;
+    }
+
+.table {
+    border-color: #000 !important;
+}
+
+/*@media only screen and (max-width: 600px) {
+    body {
+        background-color: lightblue;
+    }
+}*/
+
+.rotate {
+    -moz-transform: rotate(-45.0deg); /* FF3.5+ */
+    -o-transform: rotate(-45.0deg); /* Opera 10.5 */
+    -webkit-transform: rotate(-45.0deg); /* Saf3.1+, Chrome */
+}
+
+.btn-big-back {
+    width: 140px !important;
+    height: 40px !important;
+    font-weight: 500 !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: #fff !important;
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+.btn-sm-back {
+    width: 90px !important;
+    height: 40px !important;
+    font-weight: 500 !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: #fff !important;
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}

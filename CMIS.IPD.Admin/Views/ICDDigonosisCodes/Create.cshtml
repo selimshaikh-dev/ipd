@@ -1,0 +1,96 @@
+﻿@model IPD.Domain.Entities.ICDDigonosisCode
+
+@{
+    ViewData["Title"] = "ICDDigonosisCode";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<div class="row m-4">
+    <!--Left Navigation-->
+    @Html.Partial("_LeftNavigation")
+
+    <div class="col-md-8 mt-2">
+        <h4>
+            ICD Digonosis Code
+        </h4>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+
+        <div class="card mt-2">
+            <h6 class="card-header text-secondary">
+                ICD Digonosis Code
+            </h6>
+            
+            <form asp-action="Create" asp-controller="ICDDigonosisCodes" method="post">
+                <div class="card-body mt-2">
+                    <div class="form-group row">
+                        <label asp-for="ICDCode" class="col-sm-3 col-form-label text-end">ICDCode<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-sm-7">
+                            <input asp-for="ICDCode" type="text" name="ICDCode" class="form-control" id="iCDCode">
+                            <span asp-validation-for="ICDCode" class="text-danger"></span>
+                            <span id="userValidation" class="text-danger">ICD Code already exist!!</span>
+                        </div>
+
+                        <label asp-for="Description" class="col-sm-3 col-form-label text-end">Description<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-sm-7 mt-2">
+                            <input asp-for="Description" type="text" name="Description" class="form-control" id="description">
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <span id="userValidations" class="text-danger">Description already exist!!</span>
+                        </div>
+
+                        <label class="col-sm-3 col-form-label text-end">Parents ID<span class="text-danger" style="font-size:14px;"> *</span></label>
+                        <div class="col-sm-7 mt-2">
+                            <select asp-for="ParentsID" class="form-control" asp-items="ViewBag.categories">
+                                <value selected>0</value>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-center mt-2">
+                        <button type="submit" id="btnSave" class="btn btn-primary m-2">Create</button>
+                        <a href="@Url.ActionLink("Index", "ICDDigonosisCodes")" type="button" class="btn btn-primary m-2">Back</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+<script>
+    $(document).ready(function(){
+        $("#userValidation").hide();
+        $("#userValidations").hide();      
+    })
+
+        $("#description").on("keyup", function(){
+
+        var searchid = $(this).val().trim();
+        searchid.split(' ').join('')              
+    var url = `/ICDDigonosisCodes/GetAllICDDigonosisCode`
+    $.ajax({
+        url: url,
+        cache: false,
+        success: function(data){
+            console.log(data);
+            $.each(data, function (i, item) {
+                if(item.description.trim().toUpperCase() === searchid.toUpperCase()){
+                    $('#userValidation').show();
+                    $("#btnSave").attr( "disabled", "disabled" ); 
+                        return false;
+                }else{
+                    $("#btnSave").removeAttr("disabled");
+                    $('#userValidation').hide();
+
+             }
+        });
+        }
+        });
+
+    });
+
+</script>
+    @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+}
+}

@@ -1,0 +1,190 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@model ChiefComplaintsDto
+@using static IPD.Domain.Constants.Enumerators
+@{
+    ViewData["Title"] = "Clinical Assessment";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+    var ncds = ViewBag.Ncds as List<NcdDto> ?? new List<NcdDto>();
+    var allergies = ViewBag.Allergies as List<AllergiesDto> ?? new List<AllergiesDto>();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<!--Logo-->
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <div class="col-md-10 offset-1 text-center">
+        <h1 class="mt-3" style="font-size:36px;font-weight:700">Record Chief Complaint</h1>
+        <h5 style="font-weight:600">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+        <hr class="mt-4" style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Header-->
+    <div class="col-md-10 offset-md-1 mt-4">
+        @await Component.InvokeAsync("ClientClinicInfo")
+    </div>
+
+    <!--Body content Start-->
+    <form asp-controller="ChiefComplaints" name="ExaminationsForm" asp-action="Edit" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="row mt-3">
+            <!--Chief complaint-->
+            <div class="col-md-3 offset-md-1 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+            </div>
+
+            <div class="col-md-7">
+                @*<div class="responsive_div">*@
+                <!--Complaints START-->
+                <div class="card mx-auto mt-2">
+                    <div class="card-header text-secondary">
+                        Complaints
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-3">
+                        <fieldset>
+                            <input type="hidden" asp-for="ComplaintID" />
+                            <input type="hidden" asp-for="AdmissionID" />
+                            <!--Chief complaint-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="ComplaintName">Chief complaint<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="ComplaintName" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="ComplaintName" class="text-danger"></span>
+                            </div>
+
+                            <!--History of chief complaint -->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="ComplaintHistory">History of chief complaints<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <textarea asp-for="ComplaintHistory" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="ComplaintHistory" class="text-danger"></span>
+                            </div>
+
+                            <!--Other systems review-->
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <label asp-for="SystemsReview">Other systems review</label>
+                                <textarea asp-for="SystemsReview" class="form-control text-box multi-line" rows="4"></textarea>
+                                <span asp-validation-for="SystemsReview" class="text-danger"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--card-body END-->
+                </div>
+                <!--Complaints Card START-->
+                <!--Past medical history START-->
+                <div class="card mx-auto mt-3">
+                    <div class="card-header text-secondary">
+                        Past medical history
+                    </div>
+                    <!--Card-body START-->
+                    <div class="card-body pe-3">
+                        <fieldset>
+                            <!--Diabetes-->
+                            <div class="form-group mb-3 row me-2 ms-2">
+                                <label asp-for="Diabetes">Diabetes<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <select asp-for="Diabetes" asp-items="Html.GetEnumSelectList(typeof(Diabetes))" class="form-select">
+                                    <option value="">Select</option>
+                                </select>
+                                <span asp-validation-for="Diabetes" class="text-danger"></span>
+                            </div>
+
+                            <!--Hypertension-->
+                            <div class="form-group mb-3 row me-2 ms-2">
+                                <label asp-for="Hypertention">Hypertension<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <select asp-for="Hypertention" asp-items="Html.GetEnumSelectList(typeof(Hypertention))" class="form-select">
+                                    <option value="">Select</option>
+                                </select>
+                                <span asp-validation-for="Hypertention" class="text-danger"></span>
+                            </div>
+
+                            <!--Epilepsy-->
+                            <div class="form-group mb-3 row me-2 ms-2">
+                                <label asp-for="Epilepsy">Epilepsy<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                <select asp-for="Epilepsy" asp-items="Html.GetEnumSelectList(typeof(Epilepsy))" class="form-select">
+                                    <option value="">Select</option>
+                                </select>
+                                <span asp-validation-for="Epilepsy" class="text-danger"></span>
+                            </div>
+
+                            <!--OtherNCDs-->
+                            <div class="form-group mb-3 me-0 ms-0 row">
+                                <label asp-for="PatientsNcdsIds">OtherNCDs</label>
+                                @{
+                                    var ncdsIdList = (Model.PatientsNcds ?? new List<PatientsNcdDto>()).Select(x => x.NcdsID).ToList();
+                                    var ncdsList = ncds.Select(x => new SelectListItem
+            {
+                Text = x.NcdName,
+                Value = x.NcdsID.ToString(),
+                Selected = ncdsIdList.Contains(x.NcdsID)
+            });
+                                }
+                                <select multiple asp-for="PatientsNcdsIds" asp-items="ncdsList" class="form-control js-select2">
+                                </select>
+                                <span asp-validation-for="PatientsNcdsIds" class="text-danger"></span>
+                            </div>
+
+                            <!--Allergies-->
+                            <div class="form-group mb-3 me-0 ms-0 row">
+                                @{
+                                    var allergiesIdList = (Model.PatientAllergy ?? new List<PatientAllergyDto>()).Select(x => x.AllergiesID).ToList();
+                                    var allergiesList = allergies.Select(x => new SelectListItem
+                                    {
+                                        Text = x.AllergiesName,
+                                        Value = x.AllergiesID.ToString(),
+                                        Selected = allergiesIdList.Contains(x.AllergiesID)
+                                    });
+                                }
+                                <label asp-for="PatientAllergyIds">Allergies</label>
+                                <select multiple class="form-control js-select2" asp-for="PatientAllergyIds" asp-items="allergiesList">
+                                </select>
+                                <span asp-validation-for="PatientAllergyIds" class="text-danger"></span>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <!--Card body END-->
+                </div>
+                <!--Past medical history END-->
+                <!--Special Note START-->
+                <div class="card mx-auto mt-3">
+                    <div class="card-header text-secondary">
+                        Any special note for NCDs or Allergies
+                    </div>
+                    <div class="card-body pe-3">
+                        <fieldset>
+                            <div class="form-group mb-3 me-2 ms-2">
+                                <textarea asp-for="SpecialNote" class="form-control text-box multi-line" rows="6"></textarea>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+                <!--Special Note END-->
+
+                <div class="col-12 text-center mb-3">
+                    <button type="submit" class="btn btn-primary btn-big mt-3 mx-2">Save</button>
+                    <a href="@Url.ActionLink("Index", "ChiefComplaints")" class="btn btn-big-back mt-3 mx-2">Back</a>
+                </div>
+                @*</div>*@
+            </div>
+        </div>
+    </form>
+    <!--Body content End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.js-select2').select2();
+    });
+
+
+</script>
+}

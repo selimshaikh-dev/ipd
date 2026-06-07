@@ -1,0 +1,216 @@
+﻿@using IPD.Domain.Dto
+@{
+    var latestVital = ViewBag.LatestVital as List<VitalDto> ?? new List<VitalDto>();
+    var latestDoctorNote = ViewBag.LatestDoctorNote as List<DoctorNotesDto> ?? new List<DoctorNotesDto>();
+    var latestDiabetesMonitoring = ViewBag.LatestDiabetesMonitoring as List<DiabeticsProfileDto> ?? new List<DiabeticsProfileDto>();
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+}
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<!--Latest Vitals-->
+<div class="card CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Latest Vitals</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">
+        <p class="card-text" style="font-size: 10px;">
+            @{
+                @if (latestVital != null)
+                {
+                    @foreach (var item in latestVital.Take(1))
+                    {
+
+                        <b style="font-size:14px;">@item.FacilityName</b>
+
+                        <br />
+                        <b style="font-size:12px;">  @item?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b>
+
+                        <br />
+                        <span>Weight: @item?.Weight kg,</span>
+                        /*var weight = Math.Round((double)(item?.Weight ?? 0), 1) + " kg";*/
+                        <span> Height: @item?.Height cm</span>
+                        /*var height = Math.Round((double)(item?.Height ?? 0), 1) + " cm";*/
+                        <br />
+                        <span>Blood pressure:</span> <span>@item?.Systolic/@item?.Diastolic</span>
+                        <br />
+
+                        <span>Oxygen Saturation:</span>
+                        if (item.OxygenSaturation != null)
+                        {
+                            string convertOxygenSaturation = Convert.ToString(item.OxygenSaturation);
+                            decimal OxygenSaturation = Convert.ToDecimal(convertOxygenSaturation);
+
+                            if (item.OxygenSaturation < 90)
+                            {
+                                <span class="text-danger">@Math.Round(OxygenSaturation, 1)%</span>
+                            }
+                            else
+                            {
+                                <span>@Math.Round(OxygenSaturation, 1)%</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                        <br />
+                        <span>Nutrition status:</span>
+                        if (item.NutritionalStatus != null)
+                        {
+                            if (item.NutritionalStatus != "Normal")
+                            {
+                                <span class="text-danger">@item.NutritionalStatus</span>
+                            }
+                            else
+                            {
+                                <span>@item.NutritionalStatus</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                        <br />
+                        <span>Pulse:</span>
+                        if (item.Pulse != null)
+                        {
+                            if (item.Pulse < 60 || item.Pulse > 100)
+                            {
+                                <span class="text-danger">@item.Pulse bpm</span>
+                            }
+                            else
+                            {
+                                <span>@item.Pulse bpm</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                        <br />
+                        <span>MUAC:</span> @item?.MUAC
+                        <br />
+                        @*<br/>*@
+                        @*<b>Blood pressure</b> @bloodPressure*@
+                    }
+                }
+            }
+        </p>
+        @if (latestVital.Count > 0)
+        {
+            <div class="viewlink">
+                <a href="@Url.ActionLink("Index", "Vitals")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+            </div>
+        }
+    </div>
+</div>
+
+<!--Doctor's Note-->
+<div class="card mt-3 CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Doctor's Note</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">
+        <p class="card-text" style="font-size: 10px;">
+            @{
+                @if (latestDoctorNote != null)
+                {
+                    @foreach (var item in latestDoctorNote.Take(1))
+                    {
+                        <text>
+                            <b style="font-size:14px;">@item.FacilityName</b><br />
+                            <b style="font-size:12px;">  @item?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b><br />
+                            <span>Date and Time of Note:</span>@item?.DateOfNote
+                            <br />
+                            <span>Observation:</span> @item?.Observation
+                            <br />
+                            <span>Test request:</span> @item?.TestRequest
+                        </text>
+                        <br />
+                    }
+                }
+            }
+        </p>
+        @if (latestDoctorNote.Count > 0)
+        {
+            <div class="viewlink">
+                <a href="@Url.ActionLink("Index", "DoctorsNote")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+            </div>
+        }
+
+    </div>
+</div>
+
+<!--Diabetis Monitoring-->
+<div class="card mt-3 CACard border-light">
+    <h5 class="card-header text-dark fw-bold fs-6">Diabetes Monitoring</h5>
+    <div class="card-body border-0" style="background-color: #F4F6F8;">
+        <p class="card-text" style="font-size: 10px;">
+            @{
+                @if (latestDiabetesMonitoring != null)
+                {
+                    @foreach (var item in latestDiabetesMonitoring.Take(1))
+                    {
+                        <b style="font-size:14px;">@item.FacilityName</b>
+
+                        <br />
+                        <b style="font-size:12px;">  @item?.DateCreated?.ToString("dd-MM-yyyy") - @admission.AssaignDoctor</b>
+
+                        <br />
+                        <span>Date and time:</span>
+
+                        @item?.DateCollected
+                        <br />
+                        <span>Blood suger:</span> @item?.BloodSuger
+                        <br />
+                        <span>Urine suger:</span>
+                        if ((double)item.UrinSuger > 0.7)
+                        {
+                            <span class="text-danger">@Math.Round(item.UrinSuger,1) mmol/L</span>
+                        }
+                        else
+                        {
+                            <span>@Math.Round(item.UrinSuger,1) mmol/L</span>
+                        }
+                        <br />
+                        <span>Urine ketones:</span>
+
+                        @item?.UrinKetones
+
+                        if (item.UrinKetones != null)
+                        {
+                            if ((double)item.UrinKetones < 0.6)
+                            {
+                                <span>Normal (@item.UrinKetones)</span>
+                            }
+                            else if ((double)item.UrinKetones >= 0.6 && (double)item.UrinKetones <= 1.0)
+                            {
+                                <span>Slightly high (@item.UrinKetones)</span>
+                            }
+                            else if ((double)item.UrinKetones > 1.0 && (double)item.UrinKetones <= 2.8)
+                            {
+                                <span>Moderately high (@item.UrinKetones) </span>
+                            }
+                            else if ((double)item.UrinKetones > 2.8)
+                            {
+                                <span class="text-danger">,Very high (@item.UrinKetones) </span>
+                            }
+                        }
+                        else
+                        {
+                            <span>-</span>
+                        }
+                        <br />
+                        <span>Insulin dose:</span>
+
+                        @item?.InsulinDose
+                        <br />
+                    }
+                }
+            }
+        </p>
+        @if (latestDiabetesMonitoring.Count > 0)
+        {
+            <div class="viewlink">
+                <a href="@Url.ActionLink("Index", "DiabeticProfile")" class="card-link float-end ms-4 me-4 mt-4" style="clear: both; display: inline-block; overflow: hidden; white-space: nowrap;">View Details</a>
+            </div>
+        }
+    </div>
+</div>

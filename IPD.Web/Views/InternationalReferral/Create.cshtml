@@ -1,0 +1,432 @@
+﻿@using IPD.Domain.Dto
+@using static IPD.Domain.Constants.Enumerators
+@using IPD.Web.Extensions
+@model RequestForReferralsDto
+
+@{
+    ViewData["Title"] = "International Referral";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+
+    var patient = ViewBag.Patient as PatientDto ?? new PatientDto();
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+    var procedures = ViewBag.Procedures as List<ProceduresDto> ?? new List<ProceduresDto>();
+    var regions = ViewBag.Regions as List<RegionsDto> ?? new List<RegionsDto>();
+    var countries = ViewBag.Countries as List<CountriesDto> ?? new List<CountriesDto>();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <div class="col-md-12">
+        <h1 class="text-center mt-3" style="font-size:36px;font-weight:700">Request for International/Local Referral</h1>
+        <h5 class="text-center" style="font-weight:600">All fields marked by (<span class="bi bi-asterisk text-danger" style="font-size:12px;"></span>) are mandatory.</h5>
+    </div>
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <form asp-controller="InternationalReferral" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row mt-3">
+                <!--Chief Complaint-->
+                <div class="col-md-3 mt-2">
+                @await Component.InvokeAsync("ClinicalAssessment")
+                </div>
+
+                <div class="col-md-6">
+                    <!--BASIC CARD START-->
+                    <div class="card mx-auto mt-2">
+                        <div class="form-group mb-4 mt-3 me-2 ms-2 row">
+                            <div class="col-md-12 col-lg-4 col-sm-1 mt-1">
+                                <label asp-for="InternationalReferral!. Phalala">Phalala<span class="text-danger" style="font-size: 14px;"> </span></label>
+                                <input asp-for="InternationalReferral!.Phalala" class="form-control" type="text">
+                                <span asp-validation-for="InternationalReferral!.Phalala" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12 col-lg-4 col-sm-1 mt-1">
+                                <label asp-for="InternationalReferral!.CivilServent">Civil servant<span class="text-danger" style="font-size: 14px;"> </span></label>
+                                <input asp-for="InternationalReferral!.CivilServent" class="form-control" type="text">
+                                <span asp-validation-for="InternationalReferral!.CivilServent" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-12 col-lg-4 col-sm-1 mt-1">
+                                <label asp-for="InternationalReferral!.EmploymentNumber">Employment number<span class="text-danger" style="font-size: 14px;"> </span></label>
+                                <input asp-for="InternationalReferral!.EmploymentNumber" class="form-control" type="text">
+                                <span asp-validation-for="InternationalReferral!.EmploymentNumber" class="text-danger"></span>
+                            </div>       
+                        </div>
+
+                        <div class="form-group mb-3 me-4 ms-4">
+                            <input asp-for="InternationalReferral!.ReferralType" value="@((int)ReferralTypeEnum.InternationalReferral)" type="radio" checked >
+                            <label  asp-for="InternationalReferral!.ReferralType"> International referral</label><br />
+                            <input asp-for="InternationalReferral!.ReferralType" value="@((int)ReferralTypeEnum.LocalReferral)" type="radio" >
+                            <label asp-for="InternationalReferral!.ReferralType"> Local referral</label>
+                        </div>
+                    </div>
+                    <!--BASIC CARD END-->
+
+                    <!--FOR-DOCTOR'S CARD START-->
+                    <div class="card mx-auto mt-3">
+                        <div class="card-header text-secondary">
+                            For Completion By Doctor
+                        </div>
+                        <!--Card-body START-->
+                        <div class="card-body pe-4">
+                            <fieldset>
+                                <input type="hidden" asp-for="InternationalReferral!.InternationalReferralID"/>
+                                <input type="hidden" asp-for="InternationalReferral!.AdmissionID"/>
+
+                                <!--Procedure-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                @{
+                                    var procedureSelectItems = procedures.Select(x => new SelectListItem
+                                    {
+                                        Text = x.ProcedureName,
+                                        Value = x.ProcedureID.ToString()
+                                    });
+                                }
+                                    <label asp-for="InternationalReferral!.ProcedureID">Procedure<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <select asp-for="InternationalReferral!.ProcedureID" style="color:antiquewhite;" asp-items="procedureSelectItems" id="Procedures" class="form-select Procedures">
+                                        <option value="">Select</option>
+                                    </select>
+                                    <span asp-validation-for="InternationalReferral!.ProcedureID" class="text-danger"></span>
+                                </div>
+
+                                <!--Referring specialist-->
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <div class="col-6">
+                                        <label asp-for="InternationalReferral!.ReferringSpecialist">Referring specialist<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.ReferringSpecialist" class="form-control" type="text">
+                                        <span asp-validation-for="InternationalReferral!.ReferringSpecialist" class="text-danger"></span>
+                                    </div>
+
+                                    <!--Practice Number-->
+                                    <div class="col-6">
+                                        <label asp-for="InternationalReferral!.PracticeNumber">Practice number<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.PracticeNumber" class="form-control" type="text">
+                                        <span asp-validation-for="InternationalReferral!.PracticeNumber" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!--Referring to-->
+                                <div class="form-group mb-3 me-2 ms-2">                         
+                                    <label asp-for="InternationalReferral!.Discipline">Referring to: Discipline / Specialty<span class="text-danger" style="font-size: 14px;"> </span></label>
+                                    <input asp-for="InternationalReferral!.Discipline" class="form-control" type="text">
+                                    <span asp-validation-for="InternationalReferral!.Discipline" class="text-danger"></span>
+                                </div>
+
+                                <!--Reason for referral-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.ReasonReferral">Reason for referral (Expected patient benefit)<span class="text-danger" style="font-size: 14px;"> </span></label>
+                                    <textarea asp-for="InternationalReferral!.ReasonReferral" class="form-control text-box multi-line" rows="3"></textarea>
+                                    <span asp-validation-for="InternationalReferral!.ReasonReferral" class="text-danger"></span>
+                                </div>
+
+                                <!--Short history & diagnosis-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.ShortHistory">Short history & diagnosis<span class="text-danger" style="font-size: 14px;"> </span></label>
+                                    <textarea asp-for="InternationalReferral!.ShortHistory" class="form-control text-box multi-line" rows="3"></textarea>
+                                    <span asp-validation-for="InternationalReferral!.ShortHistory" class="text-danger"></span>
+                                </div>
+
+                                <!--Investigation done-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.Investigation">Investigation done<span class="text-danger" style="font-size: 14px;"> </span></label>
+                                    <textarea asp-for="InternationalReferral!.Investigation" class="form-control text-box multi-line" rows="5"></textarea>
+                                    <span asp-validation-for="InternationalReferral!.Investigation" class="text-danger"></span>
+                                </div>
+
+                                <!--Contact Details-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.ContactDetails">Contact details<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <textarea asp-for="InternationalReferral!.ContactDetails" class="form-control text-box multi-line" rows="5"></textarea>
+                                    <span asp-validation-for="InternationalReferral!.ContactDetails" class="text-danger"></span>
+                                </div>
+
+                                <!--Date & Time-->
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <div class="col-6">
+                                        <label asp-for="InternationalReferral!.Date">Date<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.Date" class="form-control input-White" readonly="true" type="text" value="@Model.InternationalReferral!.Date.ToString("yyyy-MM-dd")">
+                                        <span asp-validation-for="InternationalReferral!.Date" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-6">
+                                        <label asp-for="InternationalReferral!.Time">Time<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.Time" class="form-control" type="text" asp-for="Time" value="@Model.InternationalReferral!.Time.ToString("HH:mm")">
+                                        <span asp-validation-for="InternationalReferral!.Time" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!--Stretcher & Sitting-->
+                                <div class="form-group mb-3 me-2 ms-2 row">
+                                    <div class="col-6">
+                                        <input asp-for="InternationalReferral!.PatientsTransferApparatus" type="radio" value="@((int)PatientsTransferApparatus.Stretcher)" checked>
+                                        <label class="form-check-label mt-2" asp-for="InternationalReferral!.PatientsTransferApparatus"> Stretcher</label>
+                                    </div>
+                                    <div class="col-6">
+                                        <input asp-for="InternationalReferral!.PatientsTransferApparatus" type="radio" value="@((int)PatientsTransferApparatus.Sitting)">
+                                        <label class="form-check-label mt-2" asp-for="InternationalReferral!.PatientsTransferApparatus"> Sitting</label>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                        <!--card-body END-->
+                    </div>
+                    <!--FOR-DOCTOR'S CARD END-->
+
+                    <!--PERSONAL-DETAILS CARD START-->
+                    <div class="card mx-auto mt-3">
+                        <div class="card-header text-secondary">
+                            Patient Information (Personal Details)
+                        </div>
+
+                        <!--Card-body START-->
+                        <div class="card-body pe-4">
+                            <fieldset>
+                            @*<input type="hidden" asp-for="PatientDetailsID"/>*@
+                                <input type="hidden" asp-for="InternationalReferral!.AdmissionID"/>
+
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <!--First Name-->
+                                    <div class="col-4">
+                                        <label for="FirstName">First name<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="FirstName" class="form-control" type="text" value="@patient.FirstName" readonly>
+                                        <span for="FirstName" class="text-danger"></span>
+                                    </div>
+                                    <!--Middle Name-->
+                                    <div class="col-4">
+                                        <label for="MiddleName">Middle name<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="MiddleName" class="form-control" type="text" value="@patient.MiddleName" readonly>
+                                        <span for="MiddleName" class="text-danger"></span>
+                                    </div>
+                                    <!--Last Name-->
+                                    <div class="col-4">
+                                        <label for="LastName">Last name<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="LastName" class="form-control" type="text" value="@patient.LastName" readonly>
+                                        <span for="LastName" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <!--DOB-->
+                                    <div class="col-6">
+                                        <label for="">DOB<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="" class="form-control" type="text" value="@patient.DOB.ToString("dd-MM-yyyy")" readonly>
+                                        <span for="" class="text-danger"></span>
+                                    </div>
+                                @{
+                                    var gender = "";
+                                    if (@patient.Sex == 1)
+                                    {
+                                        gender = "Male";
+                                    }
+                                    else if (@patient.Sex == 2)
+                                    {
+                                        gender = "Female";
+                                    }
+                                    else
+                                    {
+                                        gender = "Other";
+                                    }
+                                                                ;
+                                }
+                                    <!--Gender-->
+                                    <div class="col-6">
+                                        <label for="Gender">Gender<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="Gender" class="form-control" value="@gender" type="text" readonly>
+                                        <span for="Gender" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!--Passport Number-->
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <div class="col-4">
+                                        <label asp-for="InternationalReferral!.PassportNumber">Passport number<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.PassportNumber" class="form-control" type="text">
+                                        <span asp-validation-for="InternationalReferral!.PassportNumber" class="text-danger"></span>
+                                    </div>
+
+                                    <!--ID Number-->
+                                    <div class="col-4">
+                                        <label asp-for="InternationalReferral!.IDNumber">ID number<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.IDNumber" class="form-control" type="text">
+                                        <span asp-validation-for="InternationalReferral!.IDNumber" class="text-danger"></span>
+                                    </div>
+
+                                    <!--Language-->
+                                    <div class="col-4">
+                                        <label asp-for="InternationalReferral!.Language">Language<span class="text-danger" style="font-size: 14px;">*</span></label>
+                                        <input asp-for="InternationalReferral!.Language" class="form-control" type="text">
+                                        <span asp-validation-for="InternationalReferral!.Language" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!--Nationality-->
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <div class="col-4">
+                                    @{
+                                        var homeCountry = countries.FirstOrDefault(x => x.CountryID == @patient.CountryID);
+                                    }
+                                        <label for="Nationality">Nationality<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="Nationality" class="form-control" type="text" value="@homeCountry?.Name" readonly>
+                                        <span for="Nationality" class="text-danger"></span>
+                                    </div>
+                                    <!--Occupation-->
+                                    <div class="col-4">
+                                        <label asp-for="InternationalReferral!.Occupation">Occupation<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.Occupation" class="form-control" type="text">
+                                        <span asp-validation-for="InternationalReferral!.Occupation" class="text-danger"></span>
+                                    </div>
+                                    <!--Relegion-->
+                                    <div class="col-4">
+                                        <label asp-for="InternationalReferral!.Relegion">Religion<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input asp-for="InternationalReferral!.Relegion" class="form-control" type="text">
+                                        <span asp-validation-for="InternationalReferral!.Relegion" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <!--Phone-->
+                                    <div class="col-4">
+                                        <label for="Phone">Phone(H)</label>
+                                        <input for="Phone" class="form-control" type="text" value="@patient.LandPhone" readonly>
+                                        <span for="Phone" class="text-danger"></span>
+                                    </div>
+                                    <!--Cell-->
+                                    <div class="col-4">
+                                        <label for="Cell">Cell<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="Cell" class="form-control" type="text" value="@patient.Cellphone" readonly>
+                                        <span for="Cell" class="text-danger"></span>
+                                    </div>
+                                    <div class="col-4">
+                                        <!--Region-->
+                                    @{
+                                        var regionSelectedItems = regions.Select(x => new SelectListItem
+                                        {
+                                            Text = x.RegionName,
+                                            Value = x.RegionID.ToString()
+                                        });
+                                      }
+                                        <label asp-for="InternationalReferral!.RegionID">Region<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <select asp-for="InternationalReferral!.RegionID" asp-items="regionSelectedItems" class="form-select">
+                                            <option value="">Select</option>
+                                        </select>
+
+                                    </div>
+                                </div>
+
+                                <!--Postal Address-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label for="PostalAddress">Postal address<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <textarea for="PostalAddress" class="form-control text-box multi-line" rows="3" readonly>@patient.PostalAddress</textarea>
+                                    <span for="PostalAddress" class="text-danger"></span>
+                                </div>
+
+                                <!--Physical Address-->
+                                  <div class="form-group mb-3 me-2 ms-2">
+                                    <label for="ContactAddress">Physical address<span class="text-danger" style="font-size: 14px;"></span></label>
+                                    <textarea for="ContactAddress" class="form-control text-box multi-line" rows="3">@patient.ContactAddress</textarea>
+                                    <span for="ContactAddress" class="text-danger"></span>
+                                  </div>
+
+                                <!--Employer-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.Employer">Employer<span class="text-danger" style="font-size: 14px;">*</span></label>
+                                    <input asp-for="InternationalReferral!.Employer" class="form-control" type="text">
+                                    <span asp-validation-for="InternationalReferral!.Employer" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group mb-3 me-0 ms-0 row">
+                                    <!--Next of kin-->
+                                    <div class="col-4">
+                                        <label for="">Next of kin<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="" class="form-control" type="text" value="@admission.NextOfKin" readonly>
+                                        <span for="" class="text-danger"></span>
+                                    </div>
+                                    <!--Relationship-->
+                                    <div class="col-4">
+                                        <label for="">Relationship<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="" class="form-control" type="text" value="@admission.Relationship" readonly>
+                                        <span for="" class="text-danger"></span>
+                                    </div>
+                                    <!--Telephone-->
+                                    <div class="col-4">
+                                        <label for="">Telephone<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                        <input for="" class="form-control" type="text" value="@admission.Cellphone" readonly>
+                                        <span for="" class="text-danger"></span>
+                                    </div>
+                                </div>
+
+                                <!--Allergies-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.Allergies">Allergies<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <textarea asp-for="InternationalReferral!.Allergies" class="form-control text-box multi-line" rows="3"></textarea>
+                                    <span asp-for-for="PatientDetail!.Allergies" class="text-danger"></span>
+                                </div>
+
+                                <!--Chronic Illness-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.ChronicIllness">Chronic illness<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <textarea asp-for="InternationalReferral!.ChronicIllness" class="form-control text-box multi-line" rows="3"></textarea>
+                                    <span asp-validation-for="InternationalReferral!.ChronicIllness" class="text-danger"></span>
+                                </div>
+
+                                <!--Medication-->
+                                <div class="form-group mb-3 me-2 ms-2">
+                                    <label asp-for="InternationalReferral!.Medication">Medication<span class="text-danger" style="font-size: 14px;"> *</span></label>
+                                    <textarea asp-for="InternationalReferral!.Medication" class="form-control text-box multi-line" rows="3"></textarea>
+                                    <span asp-validation-for="InternationalReferral!.Medication" class="text-danger"></span>
+                                </div>
+
+                            </fieldset>
+                        </div>
+                        <!--card-body END-->
+                    </div>
+                    <!--PERSONAL-DETAILS CARD END-->
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary btn-big mt-3 me-3"> Save</button>
+                        <a href="/InternationalReferral/Index" class="btn btn-big-back mt-3">Back</a>
+                    </div>
+                </div>
+
+                <!--Daily observation-->
+                <div class="col-md-3">
+                @await Component.InvokeAsync("DailyObservation")
+                </div>
+            </div>
+
+        </form>
+
+    <!--Body content End-->
+</div>
+<!--Main container End-->
+@section Scripts
+{
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#Procedures").select2();
+        $('input#InternationalReferral_Date').datetimepicker({
+            timepicker:false,
+            format:'Y-m-d',
+            maxDate: 0,
+            MinDate: 0
+        });
+        $('input#InternationalReferral_Time').datetimepicker({
+            datepicker:false,
+            format:'H:i'
+        });
+    });
+</script>
+}

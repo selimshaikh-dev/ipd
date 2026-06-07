@@ -1,0 +1,286 @@
+﻿@using IPD.Web.Extensions;
+@model IEnumerable<BirthDetailsDto>
+@using static IPD.Domain.Constants.Enumerators
+@{
+    ViewData["Title"] = "Partograph";
+    Layout = "~/Views/Shared/_PartographLayout.cshtml";
+    var drpFacilities = ViewBag.facilities;
+    var clientName = ViewBag.ClientName as string;
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+    var patient = ViewBag.Patient as ClientsInfoDto ?? new ClientsInfoDto();
+    var facilityCode = ViewBag.facilityCode as string;
+    var baseurl = ViewBag.Baseurl as string;
+    var birthdetailInfo = ViewBag.BirthdetailsInfo as List<BirthDetailsDto> ?? new List<BirthDetailsDto>();
+    var birthdetailList = ViewBag.BirthDetailList as List<PartographIndexDto> ?? new List<PartographIndexDto>();
+    var partographId = ViewBag.partographId as string ?? string.Empty;
+    var isCreatedBirthDetails = ViewBag.isCreatedBirthDetails as string ?? "false";
+    var PartographDetails = ViewBag.PartographDetaild as string ?? String.Empty;
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+
+<div class="container-fluid">
+    <div class="row mt-3">
+        <!--Chief Complaint-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+        <div class="col-md-6 mt-3">
+
+            @if (isCreatedBirthDetails == "false")
+            {
+                if (string.IsNullOrEmpty(partographId))
+                {
+                    <a href="@Url.ActionLink("Create", "Partograph")" class="btn btn-primary btn-big fs-6 text-center">
+                        <span>Create new</span>
+                    </a>
+                }
+                else
+                {
+                    <a href="@Url.ActionLink("Create", "Partograph",new { partographId = partographId })" class="btn btn-primary btn-big fs-6 text-center">
+                        <span>Edit</span>
+                    </a>
+                }
+
+                    <!---PATIENTS INFORMATION--->
+                    <div class="card mt-2 mb-3">
+                       <div class="card-body pb-0">
+                       <table class="table table-condensed table-responsive" style="font-size: 15px;">
+                            <tbody>
+                                <tr>
+                                    <td colspan="3" class="fs-5 text-secondary shadow-sm" style="background-color: rgba(0,0,0,.03);">
+                                        <span>Partograph</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Patient name</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@clientName</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Date of admission</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span> @admission.AdmissionDate.ToString("dd-MM-yyyy")</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Time of admission</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@admission.AdmissionTime.ToShortTimeString()</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%" style="border: none;">Initiated time</th>
+                                    <td width="3" style="border: none;">:</td>
+                                    <td width="67%" style="border: none;">
+                                        @if(string.IsNullOrEmpty(partographId))
+                                         {
+                                             <span> - </span>
+                                         }
+                                         else
+                                         {
+                                            <span>@PartographDetails</span>
+                                         }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+            @foreach (var partograph in birthdetailList)
+            {
+                <div class="card mt-2 mb-3">
+                    <div class="card-body pb-0">
+                        <h6 style="color:#317eac;">Created Date : @partograph.InitiateDate.ToString("dd MMM, yyyy")</h6>
+                        <table class="table table-condensed table-responsive" style="font-size: 15px;">
+                            <tbody>
+                                @{
+                                    var SelectedItems = Html.GetEnumSelectList(typeof(TypeOfDelivery));
+                                    var Item = SelectedItems.FirstOrDefault(x => x.Value == partograph.TypeOfDelivery.ToString());
+                                    string typeOfDelivery = Item?.Text ?? string.Empty;
+                                }
+                                @{
+                                    var SelectedItems2 = Html.GetEnumSelectList(typeof(IsSuccessfulDelivery));
+                                    var Item1 = SelectedItems2.FirstOrDefault(x => x.Value == partograph.IsSuccessfulDelivery.ToString());
+                                    string isSuccessfulDelivery = Item1?.Text ?? string.Empty;
+                                }
+
+                                <tr>
+                                    <td colspan="3" class="fs-5 text-secondary shadow-sm" style="background-color: rgba(0,0,0,.03);">
+                                        <span>Partograph</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Patient name</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span> @partograph.FirstName @partograph.MiddleName @partograph.LastName</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Age</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @{
+                                            string ageText = $"{DateTime.Now.GetYearsMonthsDaysText(patient.DOB)}".Trim();
+                                            if (ageText == "()")
+                                            {
+                                                ageText = string.Empty;
+                                            }
+                                        }
+                                        <span>@ageText</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Hospital code</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                       <span> @facilityCode</span>
+                                    </td>
+                                </tr>
+
+                                @if (partograph.IsSuccessfulDelivery == 1)
+                                {
+                                    <tr>
+                                        <th width="30%">Date of admission</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span> @admission.AdmissionDate.ToLongDateString()</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="30%">Time of admission</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@admission.AdmissionTime.ToShortTimeString()</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="30%">Type Of Delivery</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@typeOfDelivery</span>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <th width="30%">Date of admission</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span> @admission.AdmissionDate.ToLongDateString()</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="30%">Time of admission</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@admission.AdmissionTime.ToShortTimeString()</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="30%">Successful delivery</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@isSuccessfulDelivery</span>
+                                        </td>
+                                    </tr>
+                                }
+
+                                @if (partograph.IsSuccessfulDelivery == 1)
+                                {
+                                    <tr>
+                                        <th width="30%">Birth date(Child)</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@partograph.BirthDate?.ToLongDateString()</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="30%">Birth time(Child)</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@partograph.BirthTime?.ToShortTimeString()</span>
+                                        </td>
+                                    </tr>
+
+                                    <tr>
+                                        <th width="30%">Remarks</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@partograph.Remarks</span>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <th width="30%">Remarks</th>
+                                        <td width="3">:</td>
+                                        <td width="67%">
+                                           <span>@partograph.Remarks</span>
+                                        </td>
+                                    </tr>
+                                }
+
+                                <tr align="right">
+                                    <td colspan="3" style="border: none;">
+                                        <a href="@Url.ActionLink("Details", "Partograph",new {partographId = @partograph.PartographID})" class="btn btn-primary btnP fs-6 text-center mx-2">
+                                            <span>Details</span>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+          
+            <!--Button Start-->
+            @if (isCreatedBirthDetails == "false")
+            {
+                if (string.IsNullOrEmpty(partographId))
+                {
+                    <a href="/Clients/ManageClient?patientId=@ViewBag.ClientId" class="btn btn-sm-back mt-1 d-none">
+                        <span>Back</span>
+                    </a>
+                }              
+            }
+            else
+            {
+                <a href="/Clients/ManageClient?patientId=@ViewBag.ClientId" class="btn btn-sm-back mt-1">
+                    <span>Back</span>
+                </a>
+            }
+            <!--Button End-->
+            
+        </div>
+
+        <!--Daily observation-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("DailyObservation")
+        </div>
+    </div>
+</div>

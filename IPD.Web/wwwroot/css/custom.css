@@ -1,0 +1,401 @@
+
+input, select, textarea {
+    padding: 13px !important;
+    font-size: 16px;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+}
+
+.form-group .form-control {
+    line-height: 1.3333333;
+    border-radius: 6px;
+    color: #555;
+    border: 1px solid #ccc;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%);
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.medicationPlan {
+    /*line-height: 1.3333333 !important;*/
+    /*height: 80px !important;*/
+    width: 537px !important;
+    border: 1px solid #ccc !important;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%) !important;
+    border-radius: 6px !important;
+    color: #555 !important;
+}
+
+.select2-container .select2-selection--single {
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 5px !important;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 8%) !important;
+    height: 48px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 42px !important;
+}
+
+/*use form search view*/
+.textColor {
+    color: #3a87ad;
+}
+
+label {
+    font-weight: bold;
+    font-size: 15px;
+    color: #362727;
+    margin-bottom:1px;
+}
+
+/*===============================
+            BUTTON
+================================*/
+.btn-big {
+    width: 140px;
+    height: 40px;
+    font-weight: 700;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn-big-back {
+    width: 140px !important;
+    height: 40px !important;
+    font-weight: 500 !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: #fff !important;
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+.btn-sm-back {
+    width: 90px !important;
+    height: 40px !important;
+    font-weight: 500 !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    color: #fff !important;
+    background-color: #6c757d !important;
+    border-color: #6c757d !important;
+}
+
+.backBtn {
+    width: 90px;
+    height: 40px;
+    font-weight: 500;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn {
+    text-shadow: 0 1px 0 rgb(0 0 0 / 10%);
+}
+
+
+@media (max-width: 768px) {
+    /*.btn-big {
+        width: 90px;        
+        font-weight: 700;
+        justify-content: center;
+        cursor: pointer;
+    }  */ 
+}
+
+
+.btn-search {
+    width: 190px;
+    /*height: 52px;*/
+    text-align: center;
+    font-weight: 700;
+}
+
+.btnNav {
+    min-width: 140px !important;
+    /*width: 145px;*/
+    text-align: center;
+    font-weight: 700;
+}
+
+.customBtn {
+    min-width: 135px !important;
+}
+
+.ww-100 {
+    width: 85% !important;
+}
+
+/*===============================
+     PATIENTS INFORMATION 
+================================*/
+.patientName {
+    /*font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;*/
+    font-weight: 700;
+    line-height: 1.2;
+    color: #317eac;
+    font-size:18px;
+}
+
+.patientCard {
+    border-radius: 3px;
+    box-shadow: inset 0 1px 1px rgb(0 0 0 / 5%);
+    border: 1px solid #e3e3e3;
+}
+
+.patientInfo {
+    font-size: 13px;
+    font-weight: 300;
+}
+
+.lbl {
+    font-size: 13px;
+    font-weight: 300;
+}
+
+.btnP {
+    width: 90px;
+    font-weight: 700;
+    text-align: center;
+}
+.wrap {
+    display: block;
+}
+
+/*===============================
+        MANAGE CLIENT
+================================*/
+.box {
+    border-radius: 4px;
+    background: #fff;
+    /*cursor: pointer;*/
+    height: 12rem;
+}
+
+/*===============================
+        EXAMINATIONS
+================================*/
+.p-text{
+    font-size: 14px;
+}
+
+/*===============================
+        PARTOGRAPH
+================================*/
+.card-design .div {
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    letter-spacing: normal;
+}
+
+.card-design input {
+    width: 87px;
+    height: 25px;
+    padding: 2px 2px 2px 2px;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 13px;
+    letter-spacing: normal;
+    border: 1px solid #ccc;
+}
+
+.card-design select {
+    outline: none;
+    width: 58px;
+    height: 30px;
+    /*padding: 2px 2px 2px 2px;*/
+    border-radius: 3px;
+    border: 1px solid #ccc;
+}
+
+.MedicineDataCell {
+    transform: rotate(-90deg);
+    text-align: center;
+    vertical-align: middle;
+    width:2em;
+}
+.TempDataCell {
+    text-align: center;
+    vertical-align: middle;
+    width: 2em;
+}
+
+/*===============================
+        CUSTOM LAYOUT  
+================================*/
+.dropdown-menu {
+    right: 0;
+    left: unset;
+    width: 100% !important;
+    text-align: center !important
+}
+
+.dropdown-toggle {
+    color: white !important;
+}
+
+.profile-menu {
+}
+
+.fa-fw {
+    margin-right: 10px;
+}
+
+.toggle-change:after {
+    border-top: 0;
+    border-bottom: .3em solid;
+}
+
+.dropdown, .dropend, .dropstart, .dropup {
+    position: inherit !important;
+}
+
+/*===============================
+         CLINICAL ASSESSMENT
+================================*/
+.ClCard a{
+    text-decoration: none;   
+}
+
+.CACard {
+    border-width: 0px;
+    /*width: 360px;*/
+    /*height: 10rem;*/
+    background: inherit;
+    background-color: rgba(215, 215, 215, 1);
+    border: none;
+    border-radius: 0px;
+    box-shadow: none;
+}
+.viewlink {
+    position: absolute;
+    bottom: 10px;
+    width: 50%;
+    font-size:13px;
+    right:0;
+}
+
+.responsive_div{
+    height:75vh;
+    overflow-y:scroll;
+}
+
+.responsive_div {
+    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    scrollbar-width: none; /* Firefox */
+}
+
+.responsive_div::-webkit-scrollbar {
+    display: none; /* Safari and Chrome */
+}
+
+.select2-dropdown {
+   max-width: 383px !important;   
+   left: 12px!important
+}
+.custom-width {
+    width: 93% !important;
+    margin-left: 10px !important;
+    height: 48px!important;
+}
+.nav-link{
+    color:white!important
+}
+
+.highcharts-credits{
+    display:none;
+}
+
+.showInput {
+    display: none;
+   
+}
+
+
+
+.ContractionTitle {
+    width: 73px !important;
+    top: 10%;
+    position: relative;
+    /*left: -2%;*/
+}
+/*.GraphsGap {
+    width: 73px !important;
+    top: 10%;
+    position: relative;
+    left: -2%;
+}
+/*===============================
+         Card Css
+================================*/
+.max-lines-complaint {
+    display: block; /* or inline-block */
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    word-wrap: break-word;
+    overflow: hidden;
+    /*max-height: 4.5em;*/
+    /*max-height:5em;*/
+    line-height: 1.5em;
+}
+.max-lines-Examination {
+    display: block; /* or inline-block */
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    word-wrap: break-word;
+    overflow: hidden;
+    /*max-height: 4.5em;*/
+  /*  max-height:5em;*/
+    line-height: 1.5em;
+}
+.max-lines-Diagnosis {
+    display: block; /* or inline-block */
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    word-wrap: break-word;
+    overflow: hidden;
+    /*max-height: 4.5em;*/
+   /* max-height:5em;*/
+    line-height: 1.5em;
+}
+.max-lines-TreatmentPlan {
+    display: block; /* or inline-block */
+    /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    word-wrap: break-word;
+    overflow: hidden;
+    /*max-height: 4.5em;*/
+  /*  max-height:5em;*/
+    line-height: 1.5em;
+}
+.max-lines-MedicationPlan {
+    display: block; /* or inline-block */
+   /*text-overflow: ellipsis;*/
+    /*white-space: nowrap;*/
+    word-wrap: break-word;
+    overflow: hidden;
+    /*max-height: 4.5em;*/
+   /* max-height:5em;*/
+    line-height: 1.5em;
+}
+
+.customhr {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 0;
+    border-top: 1px solid #eee;
+    margin-left: 55px;
+    width:90%;
+}.custom {    
+    margin-left: 55px;
+    width:90%;
+}
+
+
+.show-read-more .more-text {
+    display: none;
+}
+.nav-link{
+
+}

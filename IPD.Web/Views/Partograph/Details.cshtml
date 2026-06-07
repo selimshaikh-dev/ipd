@@ -1,0 +1,403 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions;
+@model PartographDto
+@using static IPD.Domain.Dto.BirthDetailsDto
+@using static IPD.Domain.Constants.Enumerators
+@inject IHttpContextAccessor httpContextAccessor
+
+@{
+    ViewData["Title"] = "Partograph";
+    Layout = "~/Views/Shared/_PartographLayout.cshtml";
+    var admission = ViewBag.Admission as AdmissionsDto ?? new AdmissionsDto();
+    var patient = ViewBag.Patient as ClientsInfoDto ?? new ClientsInfoDto();
+    var clientName = ViewBag.ClientName as string;
+    var baseurl = ViewBag.Baseurl as string;
+    var birthdetailInfo = ViewBag.BirthdetailsInfo as BirthDetailsDto ?? new BirthDetailsDto();
+    var facility = httpContextAccessor.HttpContext?.Session.GetCurrentFacility();
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/Partograph.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Partograph-HighCharts/CervixGraph.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Partograph-HighCharts/LiquorModuling.css" asp-append-version="true" />
+
+<div id="printArea">
+    <div class="container">
+        <div style="text-align:center; margin-top:3px;"><img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block"></div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 offset-1">
+                <div class="card-design partographInfo mt-5 mb-3">
+                    <div class="card fw-bold border-0 text-dark shadow-sm" style="background-color:#f5f5f5;">
+
+                        <!--PATIENT INFORMATION-->
+                        <div class="card-body ms-3">
+                            <div class="row">
+                                <!--Patient Name-->
+                                <div class="col-md-4">
+                                    <label>Name :</label>
+                                    <span> @clientName</span>
+                                </div>
+
+                                <!--Patient Age-->
+                                <div class="col-md-4">
+                                    @{
+                                        string ageText = $"{DateTime.Now.GetYearsMonthsDaysText(patient.DOB)}".Trim();
+                                        if (ageText == "()")
+                                        {
+                                            ageText = string.Empty;
+                                        }
+                                    }
+                                    <label>Age : </label>
+                                    <span>@ageText</span>
+                                </div>
+
+                                <!--Hospital code-->
+                                <div class="col-md-4">
+                                    <label> Facility name: </label>
+                                    <span> @facility</span>
+                                </div>
+                            </div>
+
+                            <div class="row mt-3">
+                                <!--Date of admission-->
+                                <div class="col-md-4">
+                                    <label>Doctor name: </label>
+                                    <span> @admission.AssaignDoctor</span>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label>Date of admission: </label>&nbsp;
+                                    <span> @admission.AdmissionDate.ToString("dd-MM-yyyy")</span>
+                                </div>
+
+                                <!--Time of admission-->
+                                <div class="col-md-4">
+                                    <label>Time of admission:</label>
+                                    <span>@admission.AdmissionTime.ToShortTimeString()</span>                   
+                                </div>                               
+                            </div>
+
+                            <!--DELIVERY INFORMATION-->
+                            <div class="row mt-3">
+                                @if (birthdetailInfo.IsSuccessfulDelivery == 1)
+                                {
+                                    <div class="col-md-4">
+                                        @{
+                                            var SelectedItems = Html.GetEnumSelectList(typeof(TypeOfDelivery));
+                                            var Item = SelectedItems.FirstOrDefault(x => x.Value == birthdetailInfo.TypeOfDelivery.ToString());
+                                            string typeOfDelivery = Item?.Text ?? string.Empty;
+                                        }
+
+                                        <label>Type Of Delivery :</label>
+                                        <span>@typeOfDelivery</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-4">
+                                        @{
+                                            var SelectedItems = Html.GetEnumSelectList(typeof(IsSuccessfulDelivery));
+                                            var Item = SelectedItems.FirstOrDefault(x => x.Value == birthdetailInfo.IsSuccessfulDelivery.ToString());
+                                            string isSuccessfulDelivery = Item?.Text ?? string.Empty;
+                                        }
+
+                                        <label>Successful delivery: </label>
+                                        <span>@isSuccessfulDelivery</span>
+                                    </div>
+                                }
+
+                                @if (birthdetailInfo.IsSuccessfulDelivery == 1)
+                                {
+                                    <div class="col-md-4">
+                                        <label>Birth date : </label>
+                                        <span>@birthdetailInfo.BirthDate?.ToLongDateString()</span>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>BirthTime : </label>
+                                        <span> @birthdetailInfo.BirthTime?.ToShortTimeString()</span>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label>Remarks :</label>
+                                        <span> @birthdetailInfo.Remarks</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="col-md-4">
+                                        <label>Remarks :</label>
+                                        <span>@birthdetailInfo.Remarks</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--Partograph-->
+    <div class="container-fluid">
+        <div class="row offset-1">
+            <div class="col-md-12">
+                <div class="card-body">
+                    <div class="row" style="padding-left: 7px !important;">
+                        <div class="GraphsGap">
+                        </div>
+
+                        <figure class="highcharts-figure">
+                            <div id="FetalHeartRate" class="myChart"></div>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+
+            <!-- #region LiquorMolding -->
+            <div class="card-body" style="margin-top: -15px;">
+                <div class="row">
+                    <div class="ContractionTitle">
+                        <p>Liquor</p>
+                        <p> Moulding</p>
+                    </div>
+
+                    <div class="col-md-7">
+                        <table id="LiquorMoldingTable" class="table table-bordered tbl">
+                            <tr style="height: 3em;" id="LiquorRow">
+                            </tr>
+                            <tr style="height: 3em;" id="MoldingRow">
+                            </tr>
+                            <tr style="height: 4em; border-style: none;" id="LMTimeRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- #endregion -->
+            <!-- Cervix -->
+            <div class="card-body pb-2">
+                <div class="row" style="margin-left: -1px !important; margin-right: 1px !important;">
+                    <div class="GraphsGap">
+                    </div>
+                    <figure class="highcharts-figure">
+                        <div id="cervix" class="myChart"></div>
+                    </figure>
+                </div>
+            </div>
+            <!-- end cervix -->
+            <!-- Contractions-->
+            <div class="card-body pt-2">
+                <div class="row">
+                    <div class="col-md-8 offset-md-1">
+                        <table class="table tbl" style="border:none; border-bottom: none;">
+                            <tr style="height: 2em; border-bottom: none;" id="legend">
+                                <td class="TempDataCell" style="border-bottom: none;"></td>
+                                <td class="TempDataCell" style="border-bottom: none;"><b>Contractions Less than 20 seconds</b></td>
+                                <td class="TempDataCell" style="border-bottom: none;"></td>
+                                <td class="TempDataCell" style="border-bottom: none;"><b>Contractions lasting between 20-40 seconds</b></td>
+                                <td class="TempDataCell" style="border-bottom: none;"></td>
+                                <td class="TempDataCell" style="border-bottom: none;"><b>Contractions more than 40 seconds</b></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-2 mt-1">
+                <div class="row">
+                    <span style="font-size: 12px;" class="ContractionTitle mt-4">Contractions per 10 mins</span>
+                    <div class="col-md-7">
+
+                        <table id="ContractionsTable" class="table table-bordered tbl">
+                            <tr style="height: 2em;" id="FifthCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="FourthCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="ThirdCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="SecondCRow">
+                            </tr>
+                            <tr style="height: 2em;" id="FirstCRow">
+                            </tr>
+                            <tr style="height: 3em; border-style: none;" id="ContractionTimeCRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Contractions -->
+            <!-- Oytocin-->
+            <div class="card-body mt-2">
+                <div class="row" style="margin-top:70px !important;">
+                    <div class="ContractionTitle">
+                        <p style="font-size: 14px; margin-bottom:0rem !important;">Oxytocin U/L</p>
+                        <p style="font-size: 14px;margin-bottom:0rem !important;">Drops/min</p>
+                    </div>
+                    <div class="col-md-7">
+                        <table id="OxytocinDropTable" class="table table-bordered tbl">
+                            <tr style="height: 3em;" id="OxytocinRow">
+                            </tr>
+                            <tr style="height: 3em;" id="DropsRow">
+                            </tr>
+                            <tr style="height: 3em; border-style: none;" id="OxytocinTimeRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Oxytocin-->
+            <!-- Drugs-->
+            <div class="card-body mt-2">
+                <div class="row" style="margin-top : 40px !important">
+                    <span class="ContractionTitle mt-3">Drugs given and IV fluids</span>
+                    <div class="col-md-7">
+
+                        <table id="DrugsTable" class="table table-bordered tbl">
+                            <tr style="height: 10em;">
+                            </tr>
+                            <tr style="height: 7em; text-align:center; border-style: none;" id="DrugsTimeRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!--End Drugs-->
+            <!-- BP -->
+            <div class="card-body mt-4">
+                <div class="row" style="padding-left: 7px !important;">
+                    <div class="GraphsGap">
+                    </div>
+                    <figure class="highcharts-figure">
+                        <div id="PulseBP" class="myChart"></div>
+                    </figure>
+                </div>
+            </div>
+            <!-- End BP-->
+            <!-- Temp -->
+            <div class="card-body pt-1">
+                <div class="row">
+                    <span class="ContractionTitle mt-3">Temp °C</span>
+                    <div class="col-md-7">
+
+                        <table id="TempTable" class="table table-bordered tbl">
+                            <tbody>
+                                <tr style="height: 5em;"></tr>
+                            </tbody>
+                            <tfoot>
+                                <tr style="height: 3em; border-style: none;" id="TempTimeRow"></tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Temp-->
+            <!-- Urine -->
+            <div class="card-body mt-5">
+                <div class="row" style="margin-top:60px !important">
+                    <div class="ContractionTitle">
+                        <p style="margin-bottom: 15px !important;">Protein</p>
+                        <p style="margin-bottom: 15px !important;">Acetone</p>
+                        <p style="margin-bottom: 15px !important;">Volume</p>
+                    </div>
+
+                    <div class="col-md-7">
+                        <table id="UrineTable" class="table table-bordered tbl">
+                            <tr style="height: 3em;" id="ProteinRow">
+                            </tr>
+                            <tr style="height: 3em;" id="AcetoneRow">
+                            </tr>
+                            <tr style="height: 3em;" id="VolumeRow">
+                            </tr>
+                            <tr style="height: 6em; border-style: none;" id="UrineTableRow">
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- End Urine-->
+        </div>
+
+        <!--Button Start-->
+        <!--Button End-->
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 offset-1 mt-4">
+
+            <a href="/Partograph/Index" class="btn btn-sm-back mx-3">
+                <span>Back</span>
+            </a>
+
+            <button class="btn btn-primary mx-3 text-center" type="button" id="btnPrintPartograph"><span> Print To PDF</span></button>
+        </div>
+    </div>
+</div>
+
+<div>
+    <input type="hidden" id="hdnPartographID" value="@Model.PartographID" />
+    <input type="hidden" id="baseurl" value="@baseurl" />
+</div>
+
+
+
+@*Moment Js*@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.3/moment.js"></script>
+<script src="https://momentjs.com/downloads/moment-timezone-with-data.js"></script>
+
+@*Highcharts*@
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/series-label.js"></script>
+<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+
+@*Custom Scripts*@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/js/Partograph/PartographGlobal.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Cervix.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/FetalHeartRate.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/PulseBP.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/DrugsTable.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Liquor-Moduling.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Urine.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Oxytocin.js" asp-append-version="true"> </script>
+<script src="~/js/Partograph/Contractions.js" asp-append-version="true"> </script>
+
+@section Scripts
+    {
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css" />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.full.min.js"></script>
+<script src="~/lib/html2canvas/html2canvas.js"></script>
+<script src="~/lib/jspdf/polyfills.umd.js"></script>
+<script src="~/lib/jspdf/jspdf.umd.js"></script>
+<script src="~/js/Partograph/CreatePage.js"></script>
+<script src="~/js/Partograph/ChartsExport.js"></script>
+
+<script>
+    $(document).ready(function() {
+        partographId = '@Model.PartographID';
+        $('input#RegularContractions').datetimepicker({
+            timepicker: false,
+            format: 'Y-m-d',
+        });
+        $('input#MembranesRuptured').datetimepicker({
+             timepicker: false,
+            format: 'Y-m-d',
+        });
+
+        $("#DeliveryInfo").change(function() {
+            if ($("#DeliveryInfo").val() == 1) {
+                $("#hidden-panel").show()
+            } else {
+                $("#hidden-panel").hide()
+            }
+        })
+    });
+</script>
+}

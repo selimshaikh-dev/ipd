@@ -1,0 +1,37 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+@using static IPD.Domain.Constants.Enumerators
+@model ClientsInfoDto
+
+<div class="card patientCard w-100 border-0 text-dark shadow-sm" style="background-color:#f5f5f5;">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12">
+                <h5 class="patientName">@Model.FirstName @Model.MiddleName @Model.LastName</h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 patientInfo">
+                @{
+                    var sexSelectedItems = Html.GetEnumSelectList(typeof(Sex));
+                    var sexItem = sexSelectedItems.FirstOrDefault(x => x.Value == Model.Sex.ToString());
+                    string sexText = sexItem?.Text ?? string.Empty;
+
+                    string ageText = $"({DateTime.Now.GetYearsMonthsDaysText(Model.DOB)})".Trim();
+                    if (ageText == "()")
+                    {
+                        ageText = string.Empty;
+                    }
+                }
+                <label class="fw-bold lbl">UHID:</label>
+                @Model.UHID
+
+                <label class="fw-bold lbl ps-3">Sex:</label>
+                @sexText
+
+                <label class="fw-bold lbl ps-3">Date of birth:</label>
+                @Model.DOB.ToString("dd-MM-yyyy") @ageText
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,351 @@
+﻿@using IPD.Domain.Dto
+@using IPD.Web.Extensions
+
+@{
+    ViewBag.Title = "Vitals";
+    Layout = "~/Views/Shared/_CustomLayout.cshtml";
+}
+
+<!--Custom CSS-->
+<link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+<div class="col-12">
+    <img src="/images/CMIS.png" width="150" height="70" class="img-fluid mx-auto d-block">
+</div>
+
+<!--Main container Start-->
+<div class="container-fluid mt-3">
+    <div class="col-md-12">
+        <h1 class="text-center mt-3" style="font-size:36px; font-weight:700;">Vitals</h1>
+        <hr style="height:1px; width:100%; border-width:0; color:#a6a6a6; background-color:#a6a6a6;">
+    </div>
+
+    <!--Navabr button-->
+    <nav class="navbar navbar-light mt-3 p-0 m-0">
+        <form class="container-fluid justify-content-start">
+            <a href="/Vitals/Index" class="btn btn-primary btn-search me-2 my-1" role="button">Vitals</a>&nbsp;
+            <a href="/DiabeticProfile/Index" class="btn btn-outline-secondary btn-search me-2 my-1" role="button">Diabetes Monitoring</a>&nbsp;
+            <a href="/NursingCare/Index" class="btn btn-outline-secondary btn-search me-2 my-1" role="button">Nursing Care</a>&nbsp;
+            <a href="/DoctorsNote/Index" class="btn btn-outline-secondary btn-search me-2 my-1" role="button">Daily Doctor's note</a>&nbsp;
+        </form>
+    </nav>
+
+    <!--Header-->
+    <div class="mt-3" style="width:100%;">
+        @await Component.InvokeAsync("ClientInfo", new { patientId = ViewBag.ClientId, isShowAdmissionInformation = true })
+    </div>
+
+    <!--Body content Start-->
+    <div class="row mt-3">
+        <!--Chief Complaint-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("ClinicalAssessment")
+        </div>
+
+        <!--Vitals-->
+        <div class="col-md-6 mt-2">
+            @*<div class="responsive_div">*@
+            <a href="@Url.ActionLink("Create", "Vitals")" class="btn btn-primary btn-big fs-6" style="text-align: center; line-height: 28px;">Add New</a>
+
+            @foreach (var vital in Model)
+            {
+                <div class="card mt-3 mb-3">
+                    <div class="card-body pb-0 table-responsive">
+                        <h6 style="color:#317eac;">Date Created : @vital.DateCollected.ToString("dd-MM-yyyy, hh:mm ttt")</h6>
+                        <table class="table table-condensed table-responsive" style="font-size: 15px;">
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="fs-5 text-secondary shadow-sm" style="background-color: rgba(0,0,0,.03);">
+                                        <span class="text-center">Vitals</span>
+                                        @{
+                                            DateTime dateCreated = (DateTime)(vital.DateCreated ?? DateTime.Now);
+                                            DateTime currentDate = DateTime.Now;
+
+                                            TimeSpan timeDifference = currentDate.Subtract(dateCreated);
+
+                                            if (timeDifference.TotalHours <= 24)
+                                            {
+                                                <a href="@Url.ActionLink("Edit", "Vitals", new { @vitalId = vital.VitalID})" class="btn btn-primary backBtn float-end" style="text-align: center; line-height: 28px;">Edit</a>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Date and time collected</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        <span>@vital.DateCollected.ToLongDateString(), @vital.TimeCollected.ToShortTimeString()</span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Weight</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @if (vital.Weight != null)
+                                        {
+                                            if (@ViewBag.age >= 18 && vital.Weight <= 30)
+                                            {
+                                                <span class="text-danger">@Math.Round((double)vital.Weight, 1) kg</span>
+
+                                            }
+                                            else if (@ViewBag.age <= 5 && vital.Weight >= 30)
+                                            {
+                                                <span class="text-danger">@Math.Round((double)vital.Weight, 1) kg</span>
+                                            }
+                                            else
+                                            {
+                                                <span> @Math.Round((double)vital.Weight, 1) kg</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Height</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @if (vital.Height != null)
+                                        {
+                                            <span>@Math.Round((double)vital.Height, 1) cm</span>
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Temperature</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @{
+                                            if (vital.Temperature != null)
+                                            {
+                                                string convertTemperature = Convert.ToString(vital.Temperature);
+                                                decimal temperature = Convert.ToDecimal(convertTemperature);
+
+                                                if (vital.Temperature < 36 || vital.Temperature > 38)
+                                                {
+                                                    <span class="text-danger">@Math.Round(temperature, 1)&deg;C</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@Math.Round(temperature, 1)&deg;C</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">MUAC</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @if (vital.MUAC != null)
+                                        {
+                                            string convertMUAC = Convert.ToString(vital.MUAC);
+                                            decimal MUAC = Convert.ToDecimal(convertMUAC);
+
+                                            if (MUAC < 11)
+                                            {
+                                                <span class="text-danger">@Math.Round(MUAC, 1) cm</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Math.Round(MUAC, 1) cm</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Blood pressure</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @if (vital.Systolic != null && vital.Diastolic != null)
+                                        {
+                                            if (vital.Systolic >= 140 && vital.Diastolic >= 90)
+                                            {
+                                                <span class="text-danger">@vital.Systolic/@vital.Diastolic mmHg</span>
+                                            }
+                                            else if (vital.Systolic >= 140 && vital.Diastolic <= 90)
+                                            {
+                                                <span class="text-danger">@vital.Systolic</span>
+
+                                                <span>/@vital.Diastolic mmHg</span>
+                                            }
+                                            else if (vital.Systolic <= 140 && vital.Diastolic >= 90)
+                                            {
+                                                <span>@vital.Systolic/</span>
+
+                                                <span class="text-danger">@vital.Diastolic mmHg</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@vital.Systolic/@vital.Diastolic mmHg</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Respiratory rate</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @{
+                                            if (vital.RespiratoryRate != null)
+                                            {
+                                                if (vital.RespiratoryRate < 12 || vital.RespiratoryRate > 30)
+                                                {
+                                                    <span class="text-danger">@vital.RespiratoryRate bpm</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@vital.RespiratoryRate bpm</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Pulse</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @{
+                                            if (vital.Pulse != null)
+                                            {
+                                                if (vital.Pulse < 60 || vital.Pulse > 100)
+                                                {
+                                                    <span class="text-danger">@vital.Pulse bpm</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@vital.Pulse bpm</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Oxygen saturation</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @if (vital.OxygenSaturation != null)
+                                        {
+                                            string convertOxygenSaturation = Convert.ToString(vital.OxygenSaturation);
+                                            decimal OxygenSaturation = Convert.ToDecimal(convertOxygenSaturation);
+
+                                            if (vital.OxygenSaturation < 90 || vital.OxygenSaturation > 100)
+                                            {
+                                                <span class="text-danger">@Math.Round(OxygenSaturation, 1)%</span>
+                                            }
+                                            else
+                                            {
+                                                <span>@Math.Round(OxygenSaturation, 1)%</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">BMI</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                       @{
+                                            if (vital.BMI != null && (double)vital.BMI != 0.0)
+                                            {
+                                                if (@ViewBag.age <= 18 && (vital.BMI >= 20 || vital.BMI < 11))
+                                                {
+                                                    <span class="text-danger">@vital.BMI kg/m&sup2</span>
+                                                }
+                                                else if (@ViewBag.age > 18 && (vital.BMI >= 30 || vital.BMI < 16))
+                                                {
+                                                    <span class="text-danger">@vital.BMI kg/m&sup2</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@vital.BMI kg/m&sup2</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <th width="30%">Nutritional status</th>
+                                    <td width="3">:</td>
+                                    <td width="67%">
+                                        @{
+                                            if (vital.NutritionalStatus != null)
+                                            {
+                                                if (vital.NutritionalStatus != "Normal")
+                                                {
+                                                    <span class="text-danger">@vital.NutritionalStatus</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@vital.NutritionalStatus</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span>-</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+            @*</div>*@
+            <a href="/Clients/ManageClient?patientId=@ViewBag.ClientId" class="btn btn-sm-back" style="text-align: center; line-height: 28px;"><span>Back</span></a>
+        </div>
+
+        <!--Daily observation-->
+        <div class="col-md-3 mt-2">
+            @await Component.InvokeAsync("DailyObservation")
+        </div>
+    </div>
+    <!--Body content End-->
+</div>
+<!--Main container End-->
